@@ -1,0 +1,66 @@
+#!/bin/sh
+#
+# ~/.xinitrc
+#
+# Executed by startx (run your window manager from here)
+
+if [ -d /etc/X11/xinit/xinitrc.d ]; then
+  for f in /etc/X11/xinit/xinitrc.d/*; do
+    [ -x "$f" ] && . "$f"
+  done
+  unset f
+fi
+
+#Activar distribución del teclado.
+#Active keyboard's distribution
+setxkbmap -layout es & 
+
+#Activamos las teclas de volumen
+#Active the volumen's key
+xbindkeys &
+
+#Activamos udiskie para automontar los usb.
+#udiskie &
+
+
+# start autocutsel to admin only one clipboard
+#autocutsel -fork &
+#autocutsel -selection PRIMARY -fork &
+# start emacs as a daemon (if not already daemonized)
+emacs --daemon &
+# start the notification daemon dunst
+#dunst &
+# hide the mouse cursor when is inactive
+unclutter &
+# start a compositor for X11
+#compton -b --config ~/.compton.conf
+# adjust the color temperature of the screen acording the daylight
+# A Coruña coordinates
+#redshift -l 43.365:-8.41 & -t 6500:2700
+# suspend after 10 min of inactivity (put the cursor on the right up
+# corner to avoid suspension, e.g. leaving alone the computer while a
+# background task is executed )
+#xautolock -time 5 -locker "systemctl suspend" -detectsleep -corners 0-00 -notify 10 -notifier 'notify-send "Auto suspend in 5 seconds..."' &
+# start urxvt as a daemon
+#urxvtd -q -o -f &
+
+#Que no se apague la pantalla por inactividad
+xset -dpms s off &
+#Inicio dropbox
+#dropboxd &
+#Fondos de escritorio aleatorios.
+#Wallpapers random
+variety &
+numlockx &
+#nm-applet &
+
+#volumeicon &
+
+#Inicializamos el windows manager.
+#Init the window manager
+#exec dbus-launch awesome
+
+#Para casos de emergencia
+#To emergency cases.
+#exec awesome -c ~/.config/awesome/rc_default.lua
+exec i3

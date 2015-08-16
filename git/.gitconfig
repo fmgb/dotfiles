@@ -1,0 +1,12 @@
+[user]
+	email = fmgb92@gmail.com
+	name = fmgb
+[color]
+   	ui = true
+[push]
+	default = simple
+[alias]
+	st = status
+	ci = commit
+	co = checkout
+[commit]
