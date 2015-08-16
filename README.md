@@ -17,3 +17,4 @@ Este es el *contenido actual* de este repositorio, pero hay algunos archivos que
 ## Contribution
 
 [joedicastro](https://github.com/joedicastro/dotfiles)
+[aalmiramolla] (https://github.com/aalmiramolla/i3-dotfiles)

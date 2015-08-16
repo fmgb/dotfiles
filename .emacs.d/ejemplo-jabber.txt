@@ -1,0 +1,8 @@
+;;Datos para conectar con el servicio google.
+(setq jabber-account-list '(("username@dominio"
+                             (:network-server . "servidor")
+                             (:port . puerto)
+                             (:connection-type . protocolo)
+                             (:password . "password"))))
+
+;;
