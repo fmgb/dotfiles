@@ -1,2 +1,2 @@
-*/connectServer.fish
-*/connectPI.fish
+fish/functions/connectServer.fish
+fish/functions/connectPI.fish
