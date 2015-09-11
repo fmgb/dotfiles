@@ -1,6 +1,13 @@
 [user]
 	email = fmgb92@gmail.com
 	name = fmgb
+[github]
+	user = fmgb
+	email = fmgb92@gmail.com
+
+[core]
+	editor = nano
+
 [color]
    	ui = true
 [push]
@@ -10,3 +17,4 @@
 	ci = commit
 	co = checkout
 [commit]
+	template = ~/.gitmessage
