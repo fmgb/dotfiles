@@ -14,8 +14,18 @@ precedidos de un punto.
 Este es el *contenido actual* de este repositorio, pero hay algunos archivos que quiero remarcarlos.
 
 
+
+## TODO
+ - Config gnupg. Addapt to git.
+ - Fonts.
+ - Dunst.
+ - Script Xephyr
+ - Pomodoro Widget https://github.com/nikolavp/awesome
+
 ## Contribution
 
 [joedicastro](https://github.com/joedicastro/dotfiles)
 
 [aalmiramolla] (https://github.com/aalmiramolla/i3-dotfiles)
+
+[zerosign] (https://gist.github.com/zerosign/9948222)
