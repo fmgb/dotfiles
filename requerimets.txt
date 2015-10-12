@@ -1,0 +1,24 @@
+# Dunst: Notification
+dunst
+# Emacs: Editor
+emacs
+# XbindKeys: Volume Keys
+xbindkeys
+#Unclutter: Hide the mouse
+unclutter
+#Syslinux: Boot loader
+syslinux
+# Firefox : Navigator Web
+# Opera : Navegador to whatsapp
+# Dropbox : Cloud File
+# Variety : Wallpapers
+# Numlockx : Active the block Num Keyboard
+# i3 : Windows Manager
+# Arandr : 
+# Fuente awesome
+# feh
+# scrot
+# VLC
+# rofi
+# acpi
+# py3status

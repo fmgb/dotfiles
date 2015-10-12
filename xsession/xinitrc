@@ -35,8 +35,6 @@ unclutter &
 # start a compositor for X11
 #compton -b --config ~/.compton.conf
 # adjust the color temperature of the screen acording the daylight
-# A Coruña coordinates
-#redshift -l 43.365:-8.41 & -t 6500:2700
 # suspend after 10 min of inactivity (put the cursor on the right up
 # corner to avoid suspension, e.g. leaving alone the computer while a
 # background task is executed )
@@ -45,16 +43,16 @@ unclutter &
 #urxvtd -q -o -f &
 
 #Que no se apague la pantalla por inactividad
-xset -dpms s off &
+#xset -dpms s off &
 #Inicio dropbox
-#dropboxd &
+dropboxd &
 #Fondos de escritorio aleatorios.
 #Wallpapers random
 variety &
 numlockx &
-#nm-applet &
+nm-applet &
 
-#volumeicon &
+volumeicon &
 
 #Inicializamos el windows manager.
 #Init the window manager
