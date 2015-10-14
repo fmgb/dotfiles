@@ -10,11 +10,37 @@
 
 [color]
    	ui = true
+
 [push]
 	default = simple
+
 [alias]
-	st = status
+	st = status -sb
 	ci = commit
 	co = checkout
+	status = status -sb
+
 [commit]
 	template = ~/.gitmessage
+
+[status]
+	# Painfully verbose (but vitally important) info about submodules.
+    	submodulesummary = true
+
+[web]
+  	browser = firefox
+
+[color "branch"]
+	current = cyan bold
+	local = green bold
+	remote = red bold
+	upstream = red bold
+	plain = yellow reverse
+
+[color "status"]
+    	header = white
+   	added = green
+  	updated = blue
+ 	changed = yellow
+	unracked = red
+
