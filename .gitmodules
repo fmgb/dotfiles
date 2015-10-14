@@ -1,0 +1,3 @@
+[submodule "py3status"]
+	path = py3status
+	url = https://github.com/fmgb/py3status
