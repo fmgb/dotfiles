@@ -29,3 +29,7 @@ Este es el *contenido actual* de este repositorio, pero hay algunos archivos que
 [aalmiramolla] (https://github.com/aalmiramolla/i3-dotfiles)
 
 [zerosign] (https://gist.github.com/zerosign/9948222)
+
+[uranix] (https://github.com/uranix/i3-settings)
+
+[ashinkarov] (https://github.com/ashinkarov/i3-extras)

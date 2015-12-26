@@ -45,13 +45,17 @@ unclutter &
 #Que no se apague la pantalla por inactividad
 #xset -dpms s off &
 #Inicio dropbox
-dropboxd &
+dropbox &
 #Fondos de escritorio aleatorios.
 #Wallpapers random
 variety &
 numlockx &
 nm-applet &
 
+# Activar bluetooth al inicio
+echo -e 'power on\n quit' | bluetoothctl &
+
+# Plugin volumen
 volumeicon &
 
 #Inicializamos el windows manager.
