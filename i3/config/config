@@ -83,16 +83,16 @@ bindsym $mod+a focus parent
 #bindsym $mod+d focus child
 
 # Workspaces
-set $WS1 "1:"
-set $WS2 "2:"
-set $WS3 "3:"
-set $WS4 "4:"
-set $WS5 "5:"
-set $WS6 "6:"
-set $WS7 "7:"
+set $WS1 "1:"
+set $WS2 "2:"
+set $WS3 "3:"
+set $WS4 "4:"
+set $WS5 "5:"
+set $WS6 "6:"
+set $WS7 "7:"
 set $WS8 "8:"
-set $WS9 "9:"
-set $WS0 "10:"
+set $WS9 "9:"
+set $WS10 "10:"
 
 # workspace output
 #workspace $WS1 output LVDS1
@@ -159,16 +159,16 @@ mode "resize" {
         # Pressing right will grow the window’s width.
         # Pressing up will shrink the window’s height.
         # Pressing down will grow the window’s height.
-        bindsym j resize shrink width 10 px or 10 ppt
+        bindsym ntilde resize shrink width 10 px or 10 ppt
         bindsym k resize grow height 10 px or 10 ppt
         bindsym l resize shrink height 10 px or 10 ppt
-        bindsym ntilde resize grow width 10 px or 10 ppt
+        bindsym j resize grow width 10 px or 10 ppt
 
         # same bindings, but for the arrow keys
-        bindsym Left resize shrink width 10 px or 10 ppt
+        bindsym Right resize shrink width 10 px or 10 ppt
         bindsym Down resize grow height 10 px or 10 ppt
         bindsym Up resize shrink height 10 px or 10 ppt
-        bindsym Right resize grow width 10 px or 10 ppt
+        bindsym Left resize grow width 10 px or 10 ppt
 
         # back to normal: Enter or Escape
         bindsym Return mode "default"
@@ -182,12 +182,12 @@ bindsym $mod+r mode "resize"
 for_window [class="^Galculator$"] floating enable
 #for_windwos [class="I3-exit"] floating enable
 
-assign [class="^Firefox$"] → $WS1
-#assign [class="^Tmux$"] → $WS2
-assign [class="^Opera$"] → $WS4
-assign [class="^Telegram$"] → $WS5
-assign [class="^Evince$"] → $WS6
-assign [class="^Vlc$"] → $WS9
+assign [class="^Firefox$"] → $WS2
+#assign [class="^Tmux$"] → $WS3
+assign [class="^Opera$"] → $WS5
+assign [class="^Telegram$"] → $WS6
+assign [class="^Evince$"] → $WS7
+assign [class="^Vlc$"] → $WS10
 
 # colours
 # color defines for zenburn styled i3
@@ -230,12 +230,12 @@ client.urgent           $red $red $background $red
 
 
 # Programs init
-exec --no-startup-id i3-msg 'workspace '$WS1'; exec firefox'
-exec --no-startup-id i3-msg 'workspace '$WS2'; exec i3-sensible-terminal'
+exec --no-startup-id i3-msg 'workspace '$WS2'; exec firefox'
+exec --no-startup-id i3-msg 'workspace '$WS3'; exec i3-sensible-terminal'
 
-exec --no-startup-id i3-msg 'workspace '$WS4'; exec opera'
-exec --no-startup-id i3-msg 'workspace '$WS5'; exec telegram'
-#exec --no-startup-id i3-msg 'workspace '$WS0'; exec emacs -r /mnt/hdd/org-files/own.org'
+exec --no-startup-id i3-msg 'workspace '$WS5'; exec opera'
+exec --no-startup-id i3-msg 'workspace '$WS6'; exec telegram'
+#exec --no-startup-id i3-msg 'workspace '$WS1'; exec emacs -r /mnt/hdd/org-files/own.org'
 
 
 
@@ -259,7 +259,7 @@ bindsym $mod+t exec --no-startup-id "~/dotfiles/scripts/translation-firefox.sh"
 bindsym $mod+c exec --no-startup-id galculator
 bindsym XF86Display exec "arandr"
 bindsym $mod+m exec --no-startup-id "firefox --new-tab https://inbox.google.com/u/0/?pli=1"
-
+bindsym $mod+g exec --no-startup-id "galculator"
 # start a terminal
 bindsym $mod+Return exec i3-sensible-terminal
 
@@ -280,7 +280,7 @@ bar {
     font pango: Monospace, FontAwesome 10
 
     #status_command i3status -c $HOME/.i3/config_i3status
-    status_command py3status -c ~/.config/i3/config_i3status
+    status_command py3status -c $HOME/.config/i3/config_i3status
     position          top
     #output LVDS1
     tray_output LVDS1
@@ -301,9 +301,9 @@ bar {
 		       # background $background
 		       # statusline $tx
 
-		       # focused_workspace  #ffffff #ff5252
-		       # active_workspace   #ffffff #212121
-		       # inactive_workspace #888888 #222222
-		       # urgent_workspace   #ffffff #900000
+		        focused_workspace  #ffffff #ff5252
+		        active_workspace   #ffffff #212121
+		        inactive_workspace #888888 #222222
+		      	urgent_workspace   #ffffff #900000
 	       }
 }

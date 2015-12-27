@@ -16,21 +16,12 @@ order += "disk /"
 order += "disk /home"
 order += "wireless _first_"
 order += "ethernet _first_"
-order += "pomodoro"
 order += "sysdata"
-order += "git"
 order += "dpms"
 #order += "volume master"
 order += "battery_level"
 order += "tztime local"
-#order += "xrandr"
-
-pomodoro {
-	 display_bar = False
-	 format = "{mmss}"
-	 max_breaks = 4
-	 name_pomodoro = "\ue001"
-}
+order += "xrandr"
 
 battery_level {
 	hide_when_full = True
@@ -56,10 +47,6 @@ sysdata {
 
 }
 
-git {
-#	format = ""
-}
-
 tztime local{
 	format = ": %H:%M:%S  %d-%m-%Y"
 }
@@ -74,10 +61,12 @@ disk "/home" {
 	on_click 1 = "exec thunar ~/"
 }
 
-#xrandr {
-#       HDMI1_pos = "left-of LVDS1"
-#       HDMI_workspaces ="1:"
-#}
+xrandr {
+	force_on_start = "LVDS1"
+      	HDMI1_pos = "left-of LVDS1"
+       	HDMI1_workspaces ="1:,2:"
+	VGA_pos = "right-of LVDS1"
+}
 
 
 # Por el momento utilizare volumeicon
