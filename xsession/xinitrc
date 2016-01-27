@@ -32,23 +32,12 @@ emacs --daemon &
 dunst &
 # hide the mouse cursor when is inactive
 unclutter &
-# start a compositor for X11
-#compton -b --config ~/.compton.conf
-# adjust the color temperature of the screen acording the daylight
-# suspend after 10 min of inactivity (put the cursor on the right up
-# corner to avoid suspension, e.g. leaving alone the computer while a
-# background task is executed )
-#xautolock -time 5 -locker "systemctl suspend" -detectsleep -corners 0-00 -notify 10 -notifier 'notify-send "Auto suspend in 5 seconds..."' &
-# start urxvt as a daemon
-#urxvtd -q -o -f &
 
 #Que no se apague la pantalla por inactividad
 #xset -dpms s off &
 #Inicio dropbox
 dropbox &
 #Fondos de escritorio aleatorios.
-#Wallpapers random
-variety &
 numlockx &
 nm-applet &
 
@@ -60,9 +49,4 @@ volumeicon &
 
 #Inicializamos el windows manager.
 #Init the window manager
-#exec dbus-launch awesome
-
-#Para casos de emergencia
-#To emergency cases.
-#exec awesome -c ~/.config/awesome/rc_default.lua
 exec i3
