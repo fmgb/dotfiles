@@ -6,8 +6,10 @@
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    (quote
-    ("756597b162f1be60a12dbd52bab71d40d6a2845a3e3c2584c6573ee9c332a66e" default)))
- '(doc-view-continuous t))
+    ("a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" "756597b162f1be60a12dbd52bab71d40d6a2845a3e3c2584c6573ee9c332a66e" default)))
+ '(doc-view-continuous t)
+ '(org-agenda-files (quote ("~/Dropbox/org/TODO.org" "~/Dropbox/org/TFM.org")))
+ '(pyvenv-workon nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -72,7 +74,4 @@
  '(rainbow-delimiters-unmatched-face ((t (:foreground "red"))))
  '(safe-local-variable-values (quote ((ispell-local-dictionary . english) (ispell-local-dictionary . en) (ispell-dictionary . en) (encoding . utf-8))))
  '(show-paren-match ((((class color) (background light)) (:background "azure2"))))
- '(tramp-default-method "ssh")
- '(tramp-encoding-shell "/bin/bash")
- '(vr/default-replace-preview t))
-
+)

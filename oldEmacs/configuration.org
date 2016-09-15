@@ -1,33 +1,26 @@
-
+  
 #+TITLE: Emacs Configuration
 #+AUTHOR: fmgb
-#+EMAIL: fmgb92@gmail.com
+#+EMAIL: fmgarciabotella@gmail.com
 #+OPTIONS: toc:3 num:nul ^:nil
 #+STARTUP: indent
 #+STARTUP: content
-
+ 
 * Configuración Emacs
-#+BEGIN_SRC emacs-lisp
-  (defvar t-start (current-time))
-#+END_SRC
+
 ** Instrucciones de Inicio
 *** Información Personal
 #+BEGIN_SRC emacs-lisp
   (setq user-full-name "fmgb"
-        user-mail-address "fmgb92@gmail.com")
+        user-mail-address "fmgarciabotella@gmail.com")
 
 #+END_SRC
 Se carga a partir del archivo "~/.emacs.d/init.el"
-*** TODO Control inicio Emacs
-#+BEGIN_SRC emacs-lisp
-  
-
-
-#+END_SRC
 *** Fuentes de paquetes para Emacs
   #+BEGIN_SRC emacs-lisp
     (require 'package)
     (package-initialize)
+    (elpy-enable)
     (setf package-archives (list '("gnu" . "http://elpa.gnu.org/packages/")
                                  '("marmalade" . "http://marmalade-repo.org/packages/")
                                  '("melpa" . "http://melpa.milkbox.net/packages/")
@@ -39,51 +32,44 @@ Se carga a partir del archivo "~/.emacs.d/init.el"
 #+BEGIN_SRC emacs-lisp
   ;;; package --- Summary
   ;;; Commentary:
-
-
-  ;;Inicializamos los buscadores de paquetes.
+  ;;  Inicializamos los buscadores de paquetes.
   ;;; Code:
   (package-initialize)
-
     (when (not package-archive-contents)
       (package-refresh-contents))
-
-
-    ;;Definimos los paquetes necesarios y que queramos incluir.(Orden alfabético)
+  ;;Definimos los paquetes necesarios y que queramos incluir.(Orden alfabético)
   (defvar my-packages '(2048-game
                         ace-window ack anaconda-mode arduino-mode  auto-complete auto-complete-auctex autopair
                         benchmark-init
-                        checkbox cmake-mode cmake-project company company-auctex company-c-headers company-cmake company-irony 
+                        checkbox clean-aindent-mode cmake-mode cmake-project company company-auctex company-c-headers company-cmake company-irony 
                         elfeed elpy expand-region eyebrowse
                         diminish dired+ discover-my-major
                         flycheck flycheck-color-mode-line fuzzy 
                         git-commit git-timemachine
                         hideshowvis helm helm-descbinds helm-swoop highlight-blocks highlight-escape-sequences highlight-indentation highlight-numbers
-                        imenu+ irony
+                        hlinum
+                        imenu+ irony ;ibuffer ibuffer-vc
                         jabber
                         latex-pretty-symbols
                         magit markdown-mode mediawiki multiple-cursors
                         notify
                         org org-ac org-page
-                        plantuml-mode
+                        plantuml-mode projectile
                         pkg-info powerline pretty-mode pretty-mode-plus
                         rainbow-delimiters
                         screenshot smart-mode-line-powerline-theme scad-mode smex
-                        w3m 
-                        yasnippet)
+                        undo-tree
+                        w3m ;workgroups2
+                        yasnippet
+                        ztree)
       "A list of packages to ensure are installed at launch.")
-
     ;;Recorremos cada paquete y si no está instalado lo instalamos automáticamente.
     (dolist (p my-packages)
       (when (not (package-installed-p p))
             (package-install p)
           )
      )
-    ;;; ends Code
-
-    ;;; ends here
 #+END_SRC
-
 *** Paquetes necesarios para el inicio adecuado de emacs.
 #+BEGIN_SRC emacs-lisp
   (require 'uniquify)
@@ -97,7 +83,8 @@ Se carga a partir del archivo "~/.emacs.d/init.el"
   (require 'htmlize)
   (require 'company)
   (require 'erc)
-  ;;(require 'hlinum)
+  (require 'hlinum)
+  
   ;;(require 'fixmee)
   (require 'expand-region)
   ;;(require 'web-mode)
@@ -165,7 +152,8 @@ Backup in directory /tmp/
     (global-subword-mode 1)
     (show-paren-mode t)
     (delete-selection-mode 1)
-  ;;(line-number-mode t)
+    (global-linum-mode 1)
+;;    (line-number-mode 1)
   ;;(set-face-attribute 'default nil :height 140)
 
       (setf
@@ -243,7 +231,7 @@ Después de que cargue la configuración por completo, se activan los modos.
                                  (helm-descbinds-mode)
                                  (global-flycheck-mode)
                                  (autopair-global-mode)
-                                 (global-pretty-mode t)
+                                 ;;(global-pretty-mode t)
                                  (global-company-mode)
                                  (projectile-global-mode)
   ;;                               (global-fixmee-mode 1)
@@ -251,7 +239,7 @@ Después de que cargue la configuración por completo, se activan los modos.
                                  (eyebrowse-mode t)
                                  (multiple-cursors-mode t)
                                  (emacs-init-time)
-(linum-mode 1)
+                                 (linum-mode 1)
                                  )
               )
 #+END_SRC
@@ -278,15 +266,18 @@ Configuración respectiva a los modos mayores y combinación de las teclas globa
                               (toggle-truncate-lines)
                               (highlight-numbers-mode)
                               (hes-mode)
-                              (highlight-blocks-mode)
+                              ;;(highlight-blocks-mode)
                               (hlinum-activate)
-                              (hlinum-highlight-current-line)
+;;                              (hlinum-highlight-current-line)
                               (hs-minor-mode)
                               (global-company-mode)
                               ;;(electric-pair-mode)
                               (flyspell-prog-mode)
                               (rainbow-delimiters-mode)
                               (hideshowvis-enable)
+                              (projectile-global-mode)
+                              (clean-aindent-mode)
+                              (global-flycheck-mode)
                               ;;(define-key commentline (kbd "C-c ;") 'comment-region)
   ))
 
@@ -407,6 +398,8 @@ Configuración respectiva a los modos mayores y combinación de las teclas globa
   ;; elfeed
   (global-set-key (kbd "C-x w") 'elfeed)
 
+  (global-set-key (kbd "C-c ;") 'comment-region)
+
   ;; My-kill-buffer
   ;;(global-set-key (kbd "C-K") 'my-kill-buffer)
 
@@ -516,7 +509,7 @@ Configuración para C++
 El paquete proporciona la función de autocompletado. 
 #+BEGIN_SRC emacs-lisp
   (require 'color)
-    
+
     (let ((bg (face-attribute 'default :background)))
       (custom-set-faces
        `(company-tooltip ((t (:inherit default :background ,(color-lighten-name bg 2)))))
@@ -615,9 +608,9 @@ Tiene soporte para muchos lenguajes. Lo recomiendo por encima de flymake.
 
 *** Gcode
 #+BEGIN_SRC emacs-lisp
-  (add-to-list 'load-path "~/.emacs.d/plugins/gcode-mode")
-  (load "gcode.el")
-  (require 'gcode)
+  ;;(add-to-list 'load-path "~/.emacs.d/plugins/gcode-mode")
+  ;;(load "gcode.el")
+  ;;(require 'gcode)
 
 #+END_SRC
 *** HELM
@@ -645,64 +638,64 @@ Tiene soporte para muchos lenguajes. Lo recomiendo por encima de flymake.
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(when (executable-find "curl")
-    (setf helm-google-suggest-use-curl-p t))
+  (when (executable-find "curl")
+      (setf helm-google-suggest-use-curl-p t))
 
-  (setf
-   helm-split-window-in-side-p t          ; open helm buffer inside current window, not
-                                          ; occupy whole other window
-   helm-move-to-line-cycle-in-source t    ; move to end or beginning of source when
-                                          ; reaching top or bottom of source.
-   helm-ff-search-library-in-sexp t       ; search for library in `require' and
-                                          ; `declare-function' sexp.
-   helm-scroll-amount 8                   ; scroll 8 lines other window using M-<next>/M-<prior>
-   helm-ff-file-name-history-use-recentf t
-   helm-locate-command "locate %s -e -A --regex %s"
-   helm-locate-fuzzy-match t
-   helm-M-x-fuzzy-match t
-   helm-buffers-fuzzy-matching t
-   helm-recentf-fuzzy-match    t
-   helm-boring-buffer-regexp-list '("\\` "
-                                    "\\*helm"
-                                    "\\*helm-mode"
-                                    "\\*Echo Area"
-                                    "\\*Minibuf"
-                                    "\\*monky-cmd-process\\*"
-                                    "\\*epc con"
-                                    "\\*Compile-Log\\*"
-                                    "\\*monky-process\\*"
-                                    "\\*CEDET CScope\\*"
-                                    "\\*Messages\\*"
-                                    "\\*Flycheck error"
-                                    "\\*Elpy"
-                                    "\\*elpy-rpc"
-                                    "\\*.+(.+)"
-                                    "\\*fsm-debug\\*"
-                                    "elpa/.+"
-                                    "\\*Gofmt Errors\\*")
+    (setf
+     helm-split-window-in-side-p t          ; open helm buffer inside current window, not
+                                            ; occupy whole other window
+     helm-move-to-line-cycle-in-source t    ; move to end or beginning of source when
+                                            ; reaching top or bottom of source.
+     helm-ff-search-library-in-sexp t       ; search for library in `require' and
+                                            ; `declare-function' sexp.
+     helm-scroll-amount 8                   ; scroll 8 lines other window using M-<next>/M-<prior>
+     helm-ff-file-name-history-use-recentf t
+     helm-locate-command "locate %s -e -A --regex %s"
+     helm-locate-fuzzy-match t
+     helm-M-x-fuzzy-match t
+     helm-buffers-fuzzy-matching t
+     helm-recentf-fuzzy-match    t
+     helm-boring-buffer-regexp-list '("\\` "
+                                      "\\*helm"
+                                      "\\*helm-mode"
+                                      "\\*Echo Area"
+                                      "\\*Minibuf"
+                                      "\\*monky-cmd-process\\*"
+                                      "\\*epc con"
+                                      "\\*Compile-Log\\*"
+                                      "\\*monky-process\\*"
+                                      "\\*CEDET CScope\\*"
+                                      "\\*Messages\\*"
+                                      "\\*Flycheck error"
+                                      "\\*Elpy"
+                                      "\\*elpy-rpc"
+                                      "\\*.+(.+)"
+                                      "\\*fsm-debug\\*"
+                                      "elpa/.+"
+                                      "\\*Gofmt Errors\\*")
    
-   helm-boring-file-regexp-list (quote
-                                 ("\\.git$" "\\.hg$" "\\.svn$" "\\.CVS$"
-                                  "\\._darcs$" "\\.la$" "\\.o$" "~$"
-                                  "\\.pyc$" "\\.elc$" "TAGS" "\#*\#"
-                                  "\\.exe$" "\\.jar$" "\\.img$" "\\.iso$"
-                                  "\\.xlsx$" "\\.epub$" "\\.docx$"))
-   helm-ff-skip-boring-buffers t
-   helm-truncate-lines t
-   helm-projectile-sources-list '(helm-source-projectile-files-list))
+     helm-boring-file-regexp-list (quote
+                                   ("\\.git$" "\\.hg$" "\\.svn$" "\\.CVS$"
+                                    "\\._darcs$" "\\.la$" "\\.o$" "~$"
+                                    "\\.pyc$" "\\.elc$" "TAGS" "\#*\#"
+                                    "\\.exe$" "\\.jar$" "\\.img$" "\\.iso$"
+                                    "\\.xlsx$" "\\.epub$" "\\.docx$"))
+     helm-ff-skip-boring-buffers t
+     helm-truncate-lines t
+     helm-projectile-sources-list '(helm-source-projectile-files-list))
 
-  ;; Instalar ack o ack-grep
-  ;; Permite realizar busquedas.
-  (when (executable-find "ack")
-    (setq helm-grep-default-command "ack -Hn --no-group --no-color %e %p %f"
-          helm-grep-default-recurse-command "ack -H --no-group --no-color %e %p %f"))
+    ;; Instalar ack o ack-grep
+    ;; Permite realizar busquedas.
+    (when (executable-find "ack")
+      (setq helm-grep-default-command "ack -Hn --no-group --no-color %e %p %f"
+            helm-grep-default-recurse-command "ack -H --no-group --no-color %e %p %f"))
 
-  ;; en caso de que ack-grep sea el programa disponible
-  (when (executable-find "ack-grep")
-    (setq helm-grep-default-command "ack-grep -Hn --no-group --no-color %e %p %f"
-          helm-grep-default-recurse-command "ack-grep -H --no-group --no-color %e %p %f"))
-  (add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages)
-  (add-hook 'helm-goto-line-before-hook 'helm-save-current-pos-to-mark-ring)
+    ;; en caso de que ack-grep sea el programa disponible
+    (when (executable-find "ack-grep")
+      (setq helm-grep-default-command "ack-grep -Hn --no-group --no-color %e %p %f"
+            helm-grep-default-recurse-command "ack-grep -H --no-group --no-color %e %p %f"))
+    (add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages)
+    (add-hook 'helm-goto-line-before-hook 'helm-save-current-pos-to-mark-ring)
 
 #+END_SRC
 #  LocalWords:  activate mode TITLE Configuration
@@ -882,7 +875,7 @@ Permite enviar notificaciones por dbus.
 #+BEGIN_SRC emacs-lisp
    (setf    org-footnote-auto-adjust t
             org-habit-graph-column 55
-            org-directory (expand-file-name "~/Dropbox/Org")
+            org-directory (expand-file-name "~/Dropbox/org")
             org-archive-location (concat org-directory "/archivado.org::* Entradas viejas y archivadas")
             org-special-ctrl-k t
             org-ctrl-k-protect-subtree t ;; Evitamos perder todo el arbol
@@ -896,39 +889,32 @@ Permite enviar notificaciones por dbus.
             org-clock-persist 'history
             org-default-notes-file (concat org-directory "/notas.org")
             
-            org-agenda-files (list (concat org-directory "/cosasporhacer.org")
-                                   (concat org-directory "/agenda.org"))
+            org-agenda-files (list (concat org-directory "/TODO.org")
+                                   (concat org-directory "/TFM.org")
+                                   (concat org-directory "/Hoy.org"))
             
             org-mobile-directory (concat org-directory "/mobile")
             
             ;; Conjunto de templates
-            org-capture-templates `(("h" "Cosas por hacer" entry (file+headline ,(concat org-directory "/cosasporhacer.org") "Hacer")
+            org-capture-templates `(("t" "TODO" entry (file+headline ,(concat org-directory "/TODO.org") "TODO")
                                      "* TODO %^{breve descripción}\n%?\nAgregado: %U\n En: %a" :clock-in nil :clock-keep nil :clock-resume nil)
-                                    ("e" "Configurar emacs" entry (file+headline, (concat org-directory "/cosasporhacer.org") "Emacs")
+                                    ("e" "Emacs" entry (file+headline, (concat org-directory "/TODO.org") "Emacs")
                                      "* TODO %^{Breve descripción}\t%^G\n%?\nAgregado el: %U\n" :clock-in nil :clock-keep nil :clock-resume nil)
-                                    ("m" "Proyecto mkIT" entry(file+regexp, (concat org-directory "/cosasporhacer.org") "mkIT")
-                                     "* TODO %^{Breve descripción}\t%^G\n%?\nAgregado el: %U\n")
-                                    ("u" "Universidad-PL" entry(file+regexp ,(concat org-directory "/cosasporhacer.org") "PL")
-                                     "** TODO %^{breve descripción}\n%?\nAgregado el: %U \n" :clock-in nil :clock-keep nil :clock-resume nil :prepend t)
-                                    ("t" "Universidad-TAR" entry(file+regexp ,(concat org-directory "/cosasporhacer.org") "TAR")
-                                     "** TODO %^{breve descripción}\n%?\nAgregado el: %U \n" :clock-in nil :clock-keep nil :clock-resume nil :empty-lines 1)
-                                    ("w" "TFG Week" entry(file+regexp, (concat org-directory "/cosasporhacer.org") "WeekTFG")
+                                     ("c" "Curso Coursera" entry(file+regexp, (concat org-directory "/TODO.org") "Coursera")
                                      "** TODO %^{Breve descripción}\n%?\n Agregado el: %U \n":clock-in nil :clock-keep nil :clock-resume nil)
-                                    ("d" "TFG Doc" entry(file+regexp, (concat org-directory "/cosasporhacer.org") "DocTFG")
+                                    ("x" "Curso MiriadaX" entry(file+regexp, (concat org-directory "/TODO.org") "MiriadaX")
                                      "** TODO %^{Breve descripción}\n%?\n Agregado el: %U \n":clock-in nil :clock-keep nil :clock-resume nil)
-                                    ("c" "Curso Coursera" entry(file+regexp, (concat org-directory "/cosasporhacer.org") "Coursera")
-                                     "** TODO %^{Breve descripción}\n%?\n Agregado el: %U \n":clock-in nil :clock-keep nil :clock-resume nil)
-                                    ("x" "Curso MiriadaX" entry(file+regexp, (concat org-directory "/cosasporhacer.org") "MiriadaX")
-                                     "** TODO %^{Breve descripción}\n%?\n Agregado el: %U \n":clock-in nil :clock-keep nil :clock-resume nil)
-                                    ("a" "Archlinux" entry(file+regexp, (concat org-directory "/cosasporhacer.org") "Archlinux")
+                                    ("a" "Archlinux" entry(file+regexp, (concat org-directory "/TODO.org") "Archlinux")
                                      "* TODO %^{Breve descripción}\t%^G\n%?\nAgregado el: %U\n" :clock-in nil :clock-resume nil :clock-keep nil)
+                                    ("m" "TODO" entry (file+headline, (concat org-directory "/TFM.org") "TFM")
+                                    "* TODO %^{Breve descripción}\t%^G\n%?\nAgregado el: %U\n" :clock-in nil :clock-resume nil :clock-keep nil)
                                     )
             ;;org-capture-templates-contexts '()
             ;; Conjuntos de TODO
             org-todo-keywords
-            '((sequence "TODO(t)" "PROGRESS(p)" "WAITING(w)" "|" "DONE(d)")
+            '((sequence "TODO(t)" "PROGRESS(p)" "WAITING(w)" "TODAY(T)" "|" "DONE(d)")
               (sequence "REPORT(r)" "BUG(b)" "KNOWNCASE(k)" "|" "FIXED(f)")
-              (sequence "|" "CANCELLED(c)"))
+              (sequence "|" "CANCELLED(c)" ))
             
             org-todo-keyword-faces '(
                                      ("TODO" . (:foreground "black" :background "#ff4500" :weight bold))
@@ -980,6 +966,28 @@ definir qué archivos/carpetas ignorar y cuales no. Para más información ver l
         projectile-switch-project-action  'helm-projectile-find-file
         )
 #+END_SRC
+*** Python
+**** Corret Style
+#+BEGIN_SRC emacs-lisp
+  (require 'json)
+  (require 'flycheck)
+  (defun parse-jslinter-warning (warning)
+    (flycheck-error-new
+     :line (1+ (cdr (assoc 'line warning)))
+     :column (1+ (cdr (assoc 'column warning)))
+     :message (cdr (assoc 'message warning))
+     :level 'error))
+  (defun jslinter-error-parser (output checker buffer)
+    (mapcar 'parse-jslinter-warning
+            (cdr (assoc 'warnings (aref (json-read-from-string output) 0)))))
+  (flycheck-define-checker javascript-jslinter
+    "A JavaScript syntax and style checker based on JSLinter.
+
+  See URL `https://github.com/tensor5/JSLinter'."
+    :command ("c:/Users/Felix/AppData/Roaming/npm/jslint" "--raw" source)
+    :error-parser jslinter-error-parser
+    :modes (js-mode js2-mode js3-mode))
+#+END_SRC
 *** Rainbow-delimeters
 #+BEGIN_SRC emacs-lisp
       (require 'rainbow-delimiters)
@@ -1013,9 +1021,9 @@ definir qué archivos/carpetas ignorar y cuales no. Para más información ver l
 #+END_SRC
 *** Scad-mode
 #+BEGIN_SRC emacs-lisp
-  (add-to-list 'load-path "~/.emacs.d/plugins/scad-mode")
-  (load "scad-mode.el")
-  (require 'scad)
+;;  (add-to-list 'load-path "~/.emacs.d/plugins/scad-mode")
+;;  (load "scad-mode.el")
+  (require 'scad-mode)
 
 #+END_SRC
 *** Yasnippet
@@ -1035,6 +1043,13 @@ definir qué archivos/carpetas ignorar y cuales no. Para más información ver l
 
 #+END_SRC
 
+*** SSH
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'tramp-default-proxies-alist
+               '("\\'cubietruck1\\'"
+                 nil
+                 "/ssh:mkit@lactea.dtic.ua.es#14115:"))
+#+END_SRC
 ** Funciones cómodas
 *** My-kill-buffer 
 #+BEGIN_SRC emacs-lisp

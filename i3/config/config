@@ -92,7 +92,7 @@ set $WS6 "6:"
 set $WS7 "7:"
 set $WS8 "8:"
 set $WS9 "9:"
-set $WS10 "10:"
+set $WS0 "10:"
 
 # workspace output
 #workspace $WS1 output LVDS1
@@ -185,9 +185,9 @@ for_window [class="^Galculator$"] floating enable
 assign [class="^Firefox$"] → $WS2
 #assign [class="^Tmux$"] → $WS3
 assign [class="^Opera$"] → $WS5
-assign [class="^Telegram$"] → $WS6
+assign [class="^telegram$"] → $WS6
 assign [class="^Evince$"] → $WS7
-assign [class="^Vlc$"] → $WS10
+assign [class="^Vlc$"] → $WS0
 
 # colours
 # color defines for zenburn styled i3
@@ -230,11 +230,12 @@ client.urgent           $red $red $background $red
 
 
 # Programs init
+exec --no-startup-id i3-msg 'workspace '$WS1'; exec emacs -r ~/Dropbox/org/TODO.org --execute "(split-window-right)" ~/Dropbox/org/TFM.org'
 exec --no-startup-id i3-msg 'workspace '$WS2'; exec firefox'
 exec --no-startup-id i3-msg 'workspace '$WS3'; exec i3-sensible-terminal'
 
 exec --no-startup-id i3-msg 'workspace '$WS5'; exec opera'
-exec --no-startup-id i3-msg 'workspace '$WS6'; exec telegram'
+exec --no-startup-id i3-msg 'workspace '$WS6'; exec telegram-desktop-dark'
 #exec --no-startup-id i3-msg 'workspace '$WS1'; exec emacs -r /mnt/hdd/org-files/own.org'
 
 
