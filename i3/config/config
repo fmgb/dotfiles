@@ -185,7 +185,7 @@ for_window [class="^Galculator$"] floating enable
 assign [class="^Firefox$"] → $WS2
 #assign [class="^Tmux$"] → $WS3
 assign [class="^Opera$"] → $WS5
-assign [class="^telegram$"] → $WS6
+assign [class="^telegram-desktop$"] → $WS6
 assign [class="^Evince$"] → $WS7
 assign [class="^Vlc$"] → $WS0
 
@@ -235,7 +235,7 @@ exec --no-startup-id i3-msg 'workspace '$WS2'; exec firefox'
 exec --no-startup-id i3-msg 'workspace '$WS3'; exec i3-sensible-terminal'
 
 exec --no-startup-id i3-msg 'workspace '$WS5'; exec opera'
-exec --no-startup-id i3-msg 'workspace '$WS6'; exec telegram-desktop-dark'
+exec --no-startup-id i3-msg 'workspace '$WS6'; exec telegram-desktop'
 #exec --no-startup-id i3-msg 'workspace '$WS1'; exec emacs -r /mnt/hdd/org-files/own.org'
 
 

@@ -10,8 +10,6 @@ general {
         colors = true
         interval = 5
 }
-
-
 order += "disk /"
 order += "disk /home"
 order += "wireless _first_"
@@ -22,6 +20,7 @@ order += "dpms"
 order += "battery_level"
 order += "tztime local"
 order += "xrandr"
+
 
 battery_level {
 	hide_when_full = True

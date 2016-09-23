@@ -41,8 +41,14 @@ dropbox &
 numlockx &
 nm-applet &
 
+# Variety
+# To work in i3, you should comment in file ~/.config/variety/scripts/set_wallpaper:
+# if [ "$XDG_CURRENT_DESKTOP" == "i3" ]; then
+variety &
+
+
 # Activar bluetooth al inicio
-echo -e 'power on\n quit' | bluetoothctl &
+#echo -e 'power on\n quit' | bluetoothctl &
 
 # Plugin volumen
 volumeicon &
