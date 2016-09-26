@@ -11,6 +11,9 @@ if [ -d /etc/X11/xinit/xinitrc.d ]; then
   unset f
 fi
 
+export EDITOR="emacsclient"
+
+
 #Activar distribución del teclado.
 #Active keyboard's distribution
 setxkbmap -layout es & 
@@ -29,7 +32,7 @@ xbindkeys &
 # start emacs as a daemon (if not already daemonized)
 emacs --daemon &
 # start the notification daemon dunst
-dunst &
+#dunst &
 # hide the mouse cursor when is inactive
 unclutter &
 
@@ -56,3 +59,4 @@ volumeicon &
 #Inicializamos el windows manager.
 #Init the window manager
 exec i3
+

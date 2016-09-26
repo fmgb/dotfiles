@@ -1,0 +1,854 @@
+#+TITLE:     My emacs configuration
+#+AUTHOR:    García Botella, Francisco Manuel
+#+EMAIL:     fmgb92 at gmail dot com
+#+LANGUAGE:  en
+
+* Notes
+** How to install dependencies of this dotfiles
+First of all, you need to install Cask, for this, type the next command:
+#+begin_src sh
+$curl -fsSL https://raw.githubusercontent.com/cask/cask/master/go | python
+#+end_src
+
+After that, you need to install all python requirements with:
+#+begin_src sh
+$ sudo pip install -r requirements.txt
+#+end_src
+
+Finally, install all emacs packages with:
+#+begin_src sh
+$ cask install
+#+end_src
+** Other dependencies
+Other dependencies are programs that I use on some functions that I made or programs used by emacs packages.
+The dependencies are the following:
+- sshpass
+- openscad
+- python
+- make
+- pip
+- w3m (With the release of Emacs 25, there's a webkit browser on emacs)
+** Not necessary org-babel
+[[https://www.reddit.com/r/emacs/comments/372nxd/how_to_move_init_to_orgbabel/crjicdv][Reddit comment]]
+If we put this on the end of this file and rename it to 'init.org',
+its not necessary to tangle the file each time that emacs is loaded
+* My name and mail
+#+begin_src emacs-lisp :tangle yes
+  (setq user-full-name "Francisco Manuel Garcia Botella")
+  (setq user-mail-address "fmgb92 [at] gmail [dot] com")
+#+end_src
+* Package configuration
+** TODO Cask
+#+begin_src emacs-lisp :tangle no
+(require 'cask "~/.cask/cask.el")
+(cask-initialize)
+#+end_src
+** Package.el
+*** Repositories
+#+begin_src emacs-lisp :tangle yes
+;;; Emacs is not a package manager, and here we load its package manager!
+(require 'package)
+(dolist (source '(("marmalade" . "http://marmalade-repo.org/packages/")
+                  ("elpa" . "http://tromey.com/elpa/")
+				  ("melpa" . "http://melpa.milkbox.net/packages/")
+				  ("elpy" . "https://jorgenschaefer.github.io/packages/")
+                  ("melpa-stable" . "http://melpa-stable.milkbox.net/packages/")
+                  ))
+
+  (add-to-list 'package-archives source t))
+
+(package-initialize)
+
+#+end_src
+*** Packages
+#+begin_src emacs-lisp :tangle yes
+  (when (not package-archive-contents)
+    (package-refresh-contents))
+  (defvar fmgb/packages '(ecb
+                                  scad-mode
+                                  smartparens
+                                  yasnippet
+                                  magit
+                                  figlet
+                                  sr-speedbar
+                                  diff-hl
+                                  info+
+                                  projectile
+                                  auctex
+                                  latex-preview-pane
+                                  fill-column-indicator
+                                  markdown-mode
+                                  highlight-indentation
+                                  scad-preview
+                                  helm
+                                  helm-projectile
+                                  clean-aindent-mode
+                                  company
+                                  rainbow-mode
+                                  rainbow-delimiters
+                                  color-theme            ;; Themes
+                                  atom-one-dark-theme
+                                  moe-theme
+                                  powerline
+                                  ;; smart-mode-line
+                                  emojify
+                                  company-emoji
+                                  org-bullets            ;; Org-mode
+                                  calfw
+                                  gnuplot
+                                  gnuplot-mode
+                                  tumblesocks            ;; Internet
+                                  google-translate
+                                  w3m
+                                  elfeed
+                                  org-trello
+                                  offlineimap            ;; Mail
+                                  elpy                   ;; Python packages
+                                  virtualenvwrapper
+                                  ;; flycheck
+                                  py-autopep8
+                                  tea-time               ;; Unnecessary stuff, but cool
+                                  auto-package-update
+                                  ))
+  (dolist (p fmgb/packages)
+    (when (not (package-installed-p p))
+      (package-install p)))
+#+end_src
+*** Auto upload
+#+begin_src emacs-lisp :tangle yes
+;; Check if there's an update of packages
+(require 'auto-package-update)
+(auto-package-update-maybe)
+
+(add-hook 'auto-package-update-before-hook
+          (lambda ()
+			(message "I will update packages now")))
+#+end_src
+** Load Other files
+Third party .el files
+#+begin_src emacs-lisp :tangle yes
+(add-to-list 'load-path "~/.emacs.d/third-party")
+#+end_src
+* General configuration
+** Helm + Projectile
+#+begin_src emacs-lisp :tangle yes
+;; Helm
+;; http://tuhdo.github.io/helm-intro.html
+(require 'helm)
+(require 'helm-config)
+
+;; The default "C-x c" is quite close to "C-x C-c", which quits Emacs.
+;; Changed to "C-c h". Note: We must set "C-c h" globally, because we
+;; cannot change `helm-command-prefix-key' once `helm-config' is loaded.
+(global-set-key (kbd "C-c h") 'helm-command-prefix)
+(global-unset-key (kbd "C-x c"))
+
+(define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebind tab to run persistent action
+(define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB works in terminal
+(define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
+
+(when (executable-find "curl")
+  (setq helm-google-suggest-use-curl-p t))
+
+(setq helm-split-window-in-side-p           t ; open helm buffer inside current window, not occupy whole other window
+      helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
+      helm-ff-search-library-in-sexp        t ; search for library in `require' and `declare-function' sexp.
+      helm-scroll-amount                    8 ; scroll 8 lines other window using M-<next>/M-<prior>
+      helm-ff-file-name-history-use-recentf t)
+
+(helm-mode 1)
+
+(helm-autoresize-mode t) ;; Helm can resize its buffer automatically to fit with the number of candidates by enabling
+
+(global-set-key (kbd "M-x") 'helm-M-x)
+
+(global-set-key (kbd "M-y") 'helm-show-kill-ring) ;Helm shows the kill ring in a readable format and allows you to narrow down by entering sub-strings of candidates
+
+
+;; helm-mini comprises of multiple sources:
+
+;;    Current opening buffers, under the header Buffers.
+;;    Recently opened files, under the header Recentf.
+;;    Allow you to create a new buffer by pressing RET, under the header Create Buffer.
+(global-set-key (kbd "C-x b") 'helm-mini)
+
+;; To enable fuzzy matching, add the following settings:
+(setq helm-buffers-fuzzy-matching t
+      helm-recentf-fuzzy-match    t)
+
+
+(global-set-key (kbd "C-x C-f") 'helm-find-files) ;; Substitute C-x C-f for find files with helm
+
+(global-set-key (kbd "C-c h o") 'helm-occur) ;;  As you type, matching lines are updated immediately
+
+(setq enable-recursive-minibuffers t) ;; https://github.com/emacs-helm/helm/issues/168 
+
+;; Helm and projectile
+;; http://tuhdo.github.io/helm-projectile.html
+(projectile-global-mode)
+(setq projectile-completion-system 'helm)
+(helm-projectile-on)
+
+(setq projectile-switch-project-action 'helm-projectile)
+(setq projectile-enable-caching t)
+#+end_src
+** Dired
+#+begin_src emacs-lisp :tangle yes
+(require 'dired )
+(define-key dired-mode-map (kbd "RET") 'dired-find-alternate-file) ; was dired-advertised-find-file
+(define-key dired-mode-map (kbd "^") (lambda () (interactive) (find-alternate-file "..")))  ; was dired-up-directory
+
+(defun fmgb/dired-mode-setup ()
+  "to be run as hook for `dired-mode'."
+  (dired-hide-details-mode 1))
+
+(add-hook 'dired-mode-hook 'fmgb/dired-mode-setup)
+#+end_src
+** Completion (Company)
+#+begin_src emacs-lisp :tangle yes
+(require 'company)
+(add-hook 'after-init-hook 'global-company-mode)
+(require 'company-emoji)
+#+end_src
+*** Backends
+#+begin_src emacs-lisp :tangle yes
+(add-to-list 'company-backends 'company-emoji)
+#+end_src
+** PROGRESS Reconfigure
+All this need to be reconfigured
+#+begin_src emacs-lisp :tangle yes
+  ;; Reconfigure from here
+  (custom-set-variables
+   ;; custom-set-variables was added by Custom.
+   ;; If you edit it by hand, you could mess it up, so be careful.
+   ;; Your init file should contain only one such instance.
+   ;; If there is more than one, they won't work right.
+   '(erc-modules
+     (quote
+      (autojoin button completion fill irccontrols list match menu move-to-prompt netsplit networks noncommands notifications readonly ring smiley stamp track)))
+   '(org-trello-current-prefix-keybinding "C-c o" nil (org-trello)))
+
+  ;; key for shell
+  (global-set-key [f12] 'ansi-term)
+  (global-set-key [f9] 'cfw:open-org-calendar)
+  (global-set-key [f8] 'sr-speedbar-toggle)
+
+  ;; c/c++
+  (setq-default c-basic-offset 4
+                c-default-style "k&r"
+                tab-width 4
+                indent-tabs-mode t)
+
+
+  ;; ERC
+  (setq erc-hide-list '("JOIN" "PART" "QUIT"))
+
+  ;; GROUP: Editing -> Editing Basics
+  (setq global-mark-ring-max 5000         ; increase mark ring to contains 5000 entries
+        mark-ring-max 5000                ; increase kill ring to contains 5000 entries
+        mode-require-final-newline t      ; add a newline to end of file
+        )
+
+  ;; GROUP: Editing -> Killing
+  (setq
+   kill-ring-max 5000 ; increase kill-ring capacity
+   kill-whole-line t  ; if NIL, kill whole line and move the next line up
+   )
+
+  ;; Always utf8
+  (set-terminal-coding-system 'utf-8)
+  (set-keyboard-coding-system 'utf-8)
+  (set-language-environment "UTF-8")
+  (prefer-coding-system 'utf-8)
+
+
+  (require 'clean-aindent-mode)
+  (add-hook 'prog-mode-hook 'clean-aindent-mode)
+
+  ;; https://www.emacswiki.org/emacs/DeleteSelectionMode
+  (delete-selection-mode)
+
+  ;; Backups
+  (setq make-backup-files nil) ; stop creating backup~ files
+  (setq auto-save-default nil) ; stop creating #autosave# files
+  ;; (setq temporary-file-directory "/tmp/")
+  ;; (setq backup-directory-alist `((".*" . ,temporary-file-directory)))
+  ;; (setq auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
+
+
+  (global-auto-revert-mode 1) ;; for reload file if change in other editor
+  (defalias 'yes-or-no-p 'y-or-n-p) ; y or n is enough
+
+  ;; Tabs identation
+  (setq tab-width 4) ; or any other preferred value
+  (defvaralias 'c-basic-offset 'tab-width)
+  (defvaralias 'cperl-indent-level 'tab-width)
+  (setq-default indent-tabs-mode t)
+  (global-set-key (kbd "RET") 'newline-and-indent)
+
+
+  ;; show important whitespace in diff-mode
+  (add-hook 'diff-mode-hook (lambda ()
+                              (setq-local whitespace-style
+                                          '(face
+                                            tabs
+                                            tab-mark
+                                            spaces
+                                            space-mark
+                                            trailing
+                                            indentation::space
+                                            indentation::tab
+                                            newline
+                                            newline-mark))
+                              (whitespace-mode 1)))
+
+  ;; Package: smartparens
+  (require 'smartparens-config)
+  (setq sp-base-key-bindings 'paredit)
+  (setq sp-autoskip-closing-pair 'always)
+  (setq sp-hybrid-kill-entire-symbol nil)
+  (sp-use-paredit-bindings)
+
+  ;;; yasnippet
+  ;;; should be loaded before auto complete so that they can work together
+  (require 'yasnippet)
+  (add-to-list 'yas-snippet-dirs
+               "~/.emacs.d/snippets")
+  (yas-global-mode 1)
+
+  ;; https://www.emacswiki.org/emacs/DiredReuseDirectoryBuffer
+  (put 'dired-find-alternate-file 'disabled nil)
+
+  ;; Sr-speedbar
+  (require 'sr-speedbar)
+  (setq sr-speedbar-right-side nil) ;; show in left side
+  (setq speedbar-show-unknown-files t) ; show all files
+
+  ;; Diff version control
+  (global-diff-hl-mode)
+
+#+end_src
+* Theme
+** Requires
+#+begin_src emacs-lisp :tangle yes
+(require 'color-theme)
+(require 'moe-theme)
+(require 'rainbow-mode)
+(require 'rainbow-delimiters)
+(require 'highlight-indentation)
+(require 'fill-column-indicator)
+(require 'emojify)
+#+end_src
+** Font
+#+begin_src emacs-lisp :tangle yes
+(add-to-list 'default-frame-alist '(font . "Inconsolata-12"))
+;; set italic font for italic face, since Emacs does not set italic
+;; face automatically
+(set-face-attribute 'italic nil
+                    :family "Inconsolata-Italic")
+#+end_src
+*** Emoji
+#+begin_src emacs-lisp :tangle yes
+  (add-hook 'after-init-hook #'global-emojify-mode)
+#+end_src
+** Color Theme
+#+begin_src emacs-lisp :tangle yes
+(color-theme-initialize)
+;; (load-theme 'atom-one-dark t)
+(color-theme-monokai)       ;; It can be possible
+#+end_src
+** Moe Theme
+#+begin_src emacs-lisp :tangle no
+;; Show higlighted buffer-id as decoration. (Default: nil)
+;; (setq moe-theme-highlight-buffer-id t)
+
+;; Resize titles (optional).
+;; (setq moe-theme-resize-markdown-title '(1.5 1.4 1.3 1.2 1.0 1.0))
+;; (setq moe-theme-resize-org-title '(1.5 1.4 1.3 1.2 1.1 1.0 1.0 1.0 1.0))
+;; (setq moe-theme-resize-rst-title '(1.5 1.4 1.3 1.2 1.1 1.0))
+
+;; Choose a color for mode-line.(Default: blue)
+;; (moe-theme-set-color 'red)
+
+;; Finally, apply moe-theme now.
+;; Choose what you like, (moe-light) or (moe-dark)
+;; (moe-dark)
+#+end_src
+** TODO Mode line
+*** Smartline
+#+begin_src emacs-lisp :tangle no
+(sml/setup)
+#+end_src
+*** Powerline
+#+begin_src emacs-lisp :tangle yes
+(powerline-default-theme)
+#+end_src
+** Highlight Indentation
+Show a line in indentation
+#+begin_src emacs-lisp :tangle yes
+(set-face-background 'highlight-indentation-face "#8b7555")
+(set-face-background 'highlight-indentation-current-column-face "azure2")
+#+end_src
+** TODO Reconfigure
+#+begin_src emacs-lisp :tangle yes
+(setq inhibit-splash-screen t) ;; no mostrar la pantalla de bienvenida
+(scroll-bar-mode -1)
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(global-linum-mode 1)
+(global-hl-line-mode 1)
+(column-number-mode 1)
+(global-subword-mode 1)
+
+(setq truncate-partial-width-windows nil) ;; no truncar líneas en ventanas divididas
+
+(setq scroll-conservatively 1) ;; scroll de una línea cuando el cursor sale del buffer
+(setq show-paren-mode t) ;; marcar el paréntesis o llave correspondiente
+(setq transient-mark-mode t) ;; marcar la zona seleccionada
+
+
+;; Color for delimiters
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(rainbow-delimiters-depth-1-face ((t (:foreground "blue"))))
+ '(rainbow-delimiters-depth-2-face ((t (:foreground "yellow"))))
+ '(rainbow-delimiters-depth-3-face ((t (:foreground "green"))))
+ '(rainbow-delimiters-depth-4-face ((t (:foreground "gray"))))
+ '(rainbow-delimiters-depth-5-face ((t (:foreground "pink"))))
+ '(rainbow-delimiters-depth-6-face ((t (:foreground "purple"))))
+ '(rainbow-delimiters-depth-7-face ((t (:foreground "white"))))
+ '(rainbow-delimiters-depth-8-face ((t (:foreground "#8b7500"))))
+ '(rainbow-delimiters-depth-9-face ((t (:foreground "#8b7555"))))
+ '(rainbow-delimiters-unmatched-face ((t (:foreground "red"))))
+ '(show-paren-match ((((class color) (background light)) (:background "azure2")))))
+#+end_src
+* Text editing
+** Fly check typo errors
+#+begin_src emacs-lisp :tangle yes
+  (if (executable-find "aspell")
+      (progn
+        (setq ispell-program-name "aspell")
+        (setq ispell-extra-args '("--sug-mode=ultra"))
+        (setq ispell-dictionary "british"))
+    (setq ispell-program-name "ispell"))
+#+end_src
+** Org-mode
+*** TODO General Configuration
+#+begin_src emacs-lisp :tangle yes
+  ;; Show agenda
+  (global-set-key (kbd "C-c a") 'org-agenda)
+  ;; Use templates
+  (global-set-key (kbd "C-c c") 'org-capture)
+
+  (setf org-footnote-auto-adjust t
+  ;;         org-habit-graph-column 55
+        org-directory (expand-file-name "~/org-files")
+        org-archive-location (concat org-directory "/archivado.org::* Old and archived entries")
+        org-enforce-todo-dependencies t
+        org-special-ctrl-k t
+        org-ctrl-k-protect-subtree t ;; Evitamos perder todo el arbol
+        org-catch-invisible-edits 'show
+        org-return-follow-link t
+        ;;org-blank-before-new-entry t
+        org-startup-indented t
+        org-startup-folded t
+        org-imenu-depth 5
+        org-log-done 'time
+        org-clock-persist 'history
+        org-default-notes-file (concat org-directory "/notes.org")         
+        org-mobile-directory "~/Dropbox/org-files"
+        org-mobile-inbox-for-pull (concat org-directory "/notes_mobile.org")        
+        ;; Conjuntos de TODO
+        org-todo-keywords
+        '((sequence "TODO(t)" "PROGRESS(p)" "REVIEW(r)" "|" "DONE(d)")
+          (sequence "INBOX(i)" "THISMONTH(m)" "THISWEEK(s)" "TODAY(h)" "|" "DONE(d)")
+          (sequence "BUG(b)" "KNOWNCASE(k)" "REVIEW(r)" "|" "FIXED(f)")
+          (sequence "|" "CANCELLED(c)"))
+        
+        org-todo-keyword-faces '(
+                                 ("TODO" . (:foreground "black" :background "#454500" :weight bold))
+                                 ("PROGRESS" . (:foreground "black" :background "#ffa500" :weight bold))
+                                 ("WAITING" . (:foreground "black" :background "#0000ff" :weight bold))
+                                 ("DONE" . (:foreground "black" :background "#32cd32" :weight bold))
+                                 ("REVIEW" . (:foreground "black" :background "#ffff00" :weight bold))
+                                 ("BUG" . (:foreground "black" :background "#ff0000" :weight bold))
+                                 ("KNOWCASE" . (:foreground "black" :background "#ff00ff" :weight bold))
+                                 ("FIXED" . (:foreground "black" :background "#00ffff" :weight bold))
+                                 ("CANCELLED" . (:foreground "black" :background "#8b0000" :weight bold))
+                                 )
+        )
+
+  (setq org-agenda-files (list
+                          (concat org-directory "/own.org")
+                          (concat org-directory "/work.org")))
+#+end_src
+*** Open each file with their program
+#+begin_src emacs-lisp :tangle yes
+(setq org-file-apps
+      '((auto-mode . emacs)
+        ("\\.x?html?\\'" . "firefox %s")
+        ("\\.pdf\\'" . "zathura \"%s\"")))
+#+end_src
+*** Org-templates
+#+BEGIN_SRC emacs-lisp :tangle yes
+  ;; Conjunto de templates
+  (setq org-capture-templates '(
+                                ("a" "Bookmark" entry(file+headline (concat org-directory "/own.org") "Bookmarks")
+                                 "** %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :empty-lines 1)
+                                ("b" "Bugs")
+                                ("ba" "Bug ArchLinux" entry(file+headline (concat org-directory "/errors.org") "ArchLinux")
+                                 "** %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :empty-lines 1)
+                                ("be" "Bug Emacs" entry(file+headline (concat org-directory "/errors.org") "Emacs")
+                                 "** %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :empty-lines 1)
+                                ))
+
+#+END_SRC
+*** Calendar
+#+begin_src emacs-lisp :tangle yes
+;; Calendar view
+(require 'calfw-org)
+
+;; Month
+(setq calendar-month-name-array
+  ["January" "February" "March"     "April"   "May"      "June"
+   "July"    "August"   "September" "October" "November" "December"])
+
+;; Week days
+(setq calendar-day-name-array
+      ["Sunday" "Monday" "Tuesday" "Wednesday" "Thursday" "Friday" 
+"Saturday"])
+
+;; First day of the week
+(setq calendar-week-start-day 1) ; 0:Sunday, 1:Monday
+#+end_src
+*** Pretty bullets
+#+begin_src emacs-lisp :tangle yes
+;; https://github.com/sabof/org-bullets
+(require 'org-bullets)
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+#+end_src
+*** Check words in org-mode
+#+begin_src emacs-lisp :tangle yes
+(add-hook 'org-mode-hook 'flyspell-mode)
+#+end_src
+** Markdown
+#+begin_src emacs-lisp :tangle yes
+(add-to-list 'auto-mode-alist '("\\.text\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+(setq markdown-command "markdown")
+#+end_src
+** Latex
+*** General Configuration
+#+begin_src emacs-lisp :tangle yes
+(setq TeX-auto-save t)
+(setq TeX-parse-self t)
+(setq TeX-PDF-mode t)
+(setq TeX-command "latex -shell-escape")
+(setq-default TeX-master nil)
+
+(add-hook 'LaTeX-mode-hook 'visual-line-mode)
+(add-hook 'LaTeX-mode-hook 'auto-fill-mode)
+(add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
+(add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+(setq reftex-plug-into-AUCTeX t)
+
+(latex-preview-pane-enable)
+#+end_src
+*** Check words in LaTeX
+#+begin_src emacs-lisp :tangle yes
+(add-hook 'text-mode-hook 'flyspell-mode)
+#+end_src
+* Programming
+** General
+*** Requires
+<<req_prog>>
+#+begin_src emacs-lisp :tangle yes
+
+#+end_src
+*** Keybindings
+#+begin_src emacs-lisp :tangle yes
+(global-set-key [f5] 'recompile)
+#+end_src
+*** Hooks
+All requires about appearance are in [[Theme]], the other in [[req_prog][Programming requires]]
+#+begin_src emacs-lisp :tangle yes
+  ;; Show colors in hex #f00
+  (add-hook 'prog-mode-hook 'rainbow-mode)
+  ;; Show parenthesis with colour
+  (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
+  ;; Check words in comments
+  (add-hook 'prog-mode-hook 'flyspell-prog-mode)
+  ;; Show a line in fill-column
+  (add-hook 'prog-mode-hook 'fci-mode)
+#+end_src
+*** Extensions
+Set extensions to specific mode
+#+begin_src emacs-lisp :tangle yes
+;; Openscad
+(add-to-list 'auto-mode-alist '("\\.scad\\'" . scad-mode))
+;; Octave
+(add-to-list 'auto-mode-alist '("\\.m\\'" . octave-mode))
+;; Arduino
+(add-to-list 'auto-mode-alist '("\\.\\(pde\\|ino\\)$" . arduino-mode))
+#+end_src
+** Tools
+*** Magit
+#+begin_src emacs-lisp :tangle yes
+(require 'magit)
+(setq magit-last-seen-setup-instructions "1.4.0")
+(setq magit-use-overlays nil)
+(global-set-key (kbd "C-M-g") 'magit-status)
+#+end_src
+*** ECB
+#+begin_src emacs-lisp :tangle no
+  (require 'ecb)
+  (setq ecb-options-version "2.40")
+  (setq ecb-layout-name "leftright3")
+  (setq ecb-source-path (projectile-load-known-projects))
+  (setq ecb-compile-window-height 10)
+  (setq ecb-show-sources-in-directories-buffer 'always)
+  (setq ecb-tip-of-the-day nil)
+  ;; (setq ecb-auto-activate t)
+#+end_src
+** Languages
+*** C/C++
+*** Python
+**** Pretty appearance
+#+begin_src emacs-lisp :tangle yes
+(add-hook 'python-mode-hook 'highlight-indentation-mode)
+#+end_src
+**** Elpy
+#+begin_src emacs-lisp :tangle yes
+(elpy-enable)
+#+end_src
+***** Use flycheck with elpy against flymake
+#+begin_src emacs-lisp :tangle yes
+;; (when (require 'flycheck nil t)
+;;  (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+;;  (add-hook 'elpy-mode-hook 'flycheck-mode))
+#+end_src
+***** Format file with autopep8 in each save
+#+begin_src emacs-lisp :tangle yes
+;; enable autopep8 formatting on save
+(require 'py-autopep8)
+(add-hook 'elpy-mode-hook 'py-autopep8-enable-on-save)
+#+end_src
+**** VirtualEnvs
+#+begin_src emacs-lisp :tangle yes
+;; Virtual env wrapper (https://github.com/porterjamesj/virtualenvwrapper.el)
+(require 'virtualenvwrapper)
+(venv-initialize-eshell) ;; if you want eshell support
+(setq venv-location "~/.virtualenvs/")
+#+end_src 
+*** Assembler
+*** Emacs Lisp
+*** Web
+#+begin_src emacs-lisp :tangle yes
+  (require 'web-mode)
+  (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+
+#+end_src
+* Internet and communication
+** Mail
+All the things are done with this links:
+- https://wiki.archlinux.org/index.php/OfflineIMAP#Installation
+- https://www.emacswiki.org/emacs/OfflineIMAP#toc2
+- https://www.emacswiki.org/emacs/mu4e
+- http://wenshanren.org/?p=111 (Good)
+- https://gist.github.com/areina/3879626
+- http://zmalltalker.com/linux/mu.html
+
+First of all, I installed `offlineimap` and `mu` (AUR)
+Then installed `offlineimap` in emacs
+** Google Translate
+#+begin_src emacs-lisp :tangle yes
+(require 'google-translate)
+(require 'google-translate-default-ui)
+(global-set-key (kbd "C-c M-t") 'google-translate-at-point)
+(global-set-key (kbd "C-c M-T") 'google-translate-query-translate)
+(global-set-key (kbd "C-c M-r") 'fmgb/toggle-google-translate)
+
+(setq google-translate-default-source-language "en")
+(setq google-translate-default-target-language "es")
+#+end_src
+** W3M
+This in not tangled yet
+#+begin_src emacs-lisp :tangle no
+;; (autoload 'w3m-browse-url "w3m" "Ask a WWW browser to show a URL." t)
+;; optional keyboard short-cut
+;; (global-set-key "\C-xm" 'browse-url-at-point)
+#+end_src
+
+Always open an URL with w3m and use cookies
+#+begin_src emacs-lisp :tangle yes
+(setq browse-url-browser-function 'w3m-browse-url)
+(setq w3m-use-cookies t)
+#+end_src
+** Elfeed
+RSS feeds
+#+begin_src emacs-lisp :tangle yes
+  (global-set-key (kbd "C-x w") 'elfeed)
+  (setq-default elfeed-search-filter "@1-week-ago +unread ")
+  (setq elfeed-feeds '(
+                       "https://www.archlinux.org/feeds/news/"
+                       ("http://feeds.feedburner.com/hwlibreweb?format=xml" robotics)
+                       ("http://planet.emacs-es.org/rss20.xml" emacs)
+                       ("http://planet.emacsen.org/atom.xml" emacs)
+                       ("http://feeds.weblogssl.com/genbeta" tech)
+                       ("http://feeds.weblogssl.com/genbetadev?format=xml" tech)               
+                       ("http://xkcd.com/rss.xml" comic)
+                       ("http://feeds.feedburner.com/TechCrunch/" tech)
+                       ))
+#+end_src
+** ERC
+* Cryptography
+** Org Crypt
+#+begin_src emacs-lisp :tangle yes
+;; Encrypt entrys
+(require 'org-crypt)
+(org-crypt-use-before-save-magic)
+(setq org-tags-exclude-from-inheritance (quote ("crypt")))
+;; GPG key to use for encryption
+;; Either the Key ID or set to nil to use symmetric encryption.
+(setq org-crypt-key nil)
+#+end_src
+** EPA
+#+begin_src emacs-lisp :tangle yes
+;; crypt .gpg files
+(require 'epa-file)
+(epa-file-enable)
+(setq epa-file-select-keys nil) ;; select key (email) or nil
+#+end_src
+** Sensitive mode
+#+begin_src emacs-lisp :tangle yes
+(define-minor-mode sensitive-mode
+  "For sensitive files like password lists.
+It disables backup creation and auto saving.
+
+With no argument, this command toggles the mode.
+Non-null prefix argument turns on the mode.
+Null prefix argument turns off the mode."
+  ;; The initial value.
+  nil
+  ;; The indicator for the mode line.
+  " Sensitive"
+  ;; The minor mode bindings.
+  nil
+  (if (symbol-value sensitive-mode)
+      (progn
+		;; disable backups
+		(set (make-local-variable 'backup-inhibited) t)	
+		;; disable auto-save
+		(if auto-save-default
+			(auto-save-mode -1)))
+	;; resort to default value of backup-inhibited
+    (kill-local-variable 'backup-inhibited)
+	;; resort to default auto save setting
+    (if auto-save-default
+		(auto-save-mode 1))))
+
+;; Associate .gpg with sensitive mode
+(setq auto-mode-alist
+	  (append '(("\\.gpg$" . sensitive-mode))
+			  auto-mode-alist))
+
+#+end_src
+* Unnecessary stuff
+** Tea-time
+#+begin_src emacs-lisp :tangle yes
+(require 'tea-time)
+(setq tea-time-sound "~/.emacs.d/sounds/r2-d2.wav")
+#+end_src
+* Own functions
+All this functions must start with fmgb/
+** Move lines
+#+begin_src emacs-lisp :tangle yes
+(defun move-line-up ()
+  "Move up the current line."
+  (interactive)
+  (transpose-lines 1)
+  (forward-line -2)
+  (indent-according-to-mode))
+
+(defun move-line-down ()
+  "Move down the current line."
+  (interactive)
+  (forward-line 1)
+  (transpose-lines 1)
+  (forward-line -1)
+  (indent-according-to-mode))
+
+(global-set-key [(meta shift up)]  'move-line-up)
+(global-set-key [(meta shift down)]  'move-line-down)
+#+end_src
+** Open this file
+A function to open this file more quickly
+#+begin_src emacs-lisp :tangle yes
+  (defun fmgb/set-config ()
+    "Show the emacs configuration file"
+    (interactive)
+    (find-file "~/.emacs.d/config.org"))
+#+end_src
+** Replace word with Translate
+Replace the current word with the translation
+#+begin_src emacs-lisp :tangle yes
+  (defun fmgb/replace-word-with-gtranslate ()
+    (interactive)
+    (let ((current-word (thing-at-point 'word)))
+      (google-translate-translate google-translate-default-source google-translate-default-target current-word)))
+#+end_src
+** Toggle Google Translate languages
+Toggle between Spanish and English
+#+begin_src emacs-lisp :tangle yes
+(defun fmgb/toggle-google-translate ()
+  (interactive)
+  (if (equal google-translate-default-source-language "en")
+	  (progn
+		(message "Changed language to: Source es, target en")
+		(setq google-translate-default-source-language "es")
+		(setq google-translate-default-target-language "en"))
+	(progn
+	  (message "Changed language to: Source en, target es")
+	  (setq google-translate-default-source-language "en")
+	  (setq google-translate-default-target-language "es"))
+	))
+#+end_src
+** Send a buffer over scp if it's a file
+We need to have installed /sshpass/ for obtain the password as a parameter
+#+begin_src emacs-lisp :tangle yes
+  (defun fmgb/send-buffer-over-scp ()
+    (interactive)
+    (let ((user
+           (read-string "Machine user: "))
+          (address
+           (read-string "Machine address: "))
+          (scp-command) (sshpass-command) (ask-pass))
+      (progn
+        (setq ask-pass
+              (format "Password for %s@%s: " user address))
+        (setq scp-command
+              (format "scp %s %s@%s:/home/%s/" buffer-file-name user address user))
+        (setq sshpass-command
+              (concat "sshpass -p " (shell-quote-argument (read-passwd ask-pass)) " " scp-command))
+        (shell-command sshpass-command))))
+#+end_src
+* Third-party
+** Pacman (Arch Linux package manager)
+#+begin_src emacs-lisp :tangle yes
+  ;;(require 'pacman)
+#+end_src
+** File about my company
+#+begin_src emacs-lisp :tangle yes
+;;(require 'fmgb-company)
+#+end_src
