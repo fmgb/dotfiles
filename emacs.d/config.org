@@ -37,6 +37,16 @@ its not necessary to tangle the file each time that emacs is loaded
   (setq user-full-name "Francisco Manuel Garcia Botella")
   (setq user-mail-address "fmgb92 [at] gmail [dot] com")
 #+end_src
+* My own directions
+#+BEGIN_SRC emacs-lisp :tangle yes
+  ;; Personal directory files
+  (setq user-org-files "/mnt/FilesWin/Dropbox/org/")
+  (setq user-org-files-mobile user-org-files)
+  (setq user-config-dir "~/.emacs.d/")
+
+
+
+#+END_SRC
 * Package configuration
 ** TODO Cask
 #+begin_src emacs-lisp :tangle no
@@ -46,18 +56,19 @@ its not necessary to tangle the file each time that emacs is loaded
 ** Package.el
 *** Repositories
 #+begin_src emacs-lisp :tangle yes
-;;; Emacs is not a package manager, and here we load its package manager!
-(require 'package)
-(dolist (source '(("marmalade" . "http://marmalade-repo.org/packages/")
-                  ("elpa" . "http://tromey.com/elpa/")
-				  ("melpa" . "http://melpa.milkbox.net/packages/")
-				  ("elpy" . "https://jorgenschaefer.github.io/packages/")
-                  ("melpa-stable" . "http://melpa-stable.milkbox.net/packages/")
-                  ))
+  ;;; Emacs is not a package manager, and here we load its package manager!
+  (require 'package)
+  (dolist (source '(("marmalade" . "http://marmalade-repo.org/packages/")
+                    ("elpa" . "http://tromey.com/elpa/")
+                    ("melpa" . "http://melpa.milkbox.net/packages/")
+                    ("elpy" . "https://jorgenschaefer.github.io/packages/")
+                    ("org" . "http://orgmode.org/elpa/")
+                    ("melpa-stable" . "http://melpa-stable.milkbox.net/packages/")
+                    ))
 
-  (add-to-list 'package-archives source t))
+    (add-to-list 'package-archives source t))
 
-(package-initialize)
+  (package-initialize)
 
 #+end_src
 *** Packages
@@ -94,14 +105,15 @@ its not necessary to tangle the file each time that emacs is loaded
                                   emojify
                                   company-emoji
                                   org-bullets            ;; Org-mode
+                                  org-trello
+                                  ;; Me da error org-plus-contrib
                                   calfw
-                                  gnuplot
+                                  gnuplot                ;; Plot
                                   gnuplot-mode
                                   tumblesocks            ;; Internet
                                   google-translate
                                   w3m
                                   elfeed
-                                  org-trello
                                   offlineimap            ;; Mail
                                   elpy                   ;; Python packages
                                   virtualenvwrapper
@@ -127,7 +139,7 @@ its not necessary to tangle the file each time that emacs is loaded
 ** Load Other files
 Third party .el files
 #+begin_src emacs-lisp :tangle yes
-(add-to-list 'load-path "~/.emacs.d/third-party")
+  ;;(add-to-list 'load-path "~/.emacs.d/third-party")
 #+end_src
 * General configuration
 ** Helm + Projectile
@@ -445,7 +457,7 @@ Show a line in indentation
 
   (setf org-footnote-auto-adjust t
   ;;         org-habit-graph-column 55
-        org-directory (expand-file-name "~/org-files")
+        org-directory (expand-file-name user-org-files)
         org-archive-location (concat org-directory "/archivado.org::* Old and archived entries")
         org-enforce-todo-dependencies t
         org-special-ctrl-k t
@@ -459,7 +471,7 @@ Show a line in indentation
         org-log-done 'time
         org-clock-persist 'history
         org-default-notes-file (concat org-directory "/notes.org")         
-        org-mobile-directory "~/Dropbox/org-files"
+        org-mobile-directory (expand-file-name user-org-files-mobile)
         org-mobile-inbox-for-pull (concat org-directory "/notes_mobile.org")        
         ;; Conjuntos de TODO
         org-todo-keywords
@@ -798,7 +810,7 @@ A function to open this file more quickly
   (defun fmgb/set-config ()
     "Show the emacs configuration file"
     (interactive)
-    (find-file "~/.emacs.d/config.org"))
+    (find-file (concat user-config-dir "config.org")))
 #+end_src
 ** Replace word with Translate
 Replace the current word with the translation
@@ -842,6 +854,18 @@ We need to have installed /sshpass/ for obtain the password as a parameter
         (setq sshpass-command
               (concat "sshpass -p " (shell-quote-argument (read-passwd ask-pass)) " " scp-command))
         (shell-command sshpass-command))))
+#+end_src
+** Open init emacs org
+A function to open init files org
+#+begin_src emacs-lisp :tangle yes
+  (defun fmgb/init-emacs ()
+    "Show init emacs org-files"
+    (interactive)
+    (find-file (concat user-org-files "Doctorado.org"))
+    (split-window-right)
+    (find-file (concat user-org-files "TODO.org"))
+    (split-window-right)
+    (find-file (concat user-org-files "Proyecto.org")))
 #+end_src
 * Third-party
 ** Pacman (Arch Linux package manager)
