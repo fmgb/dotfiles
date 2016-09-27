@@ -1,29 +1,85 @@
+;; Official Cask Repositories
 (source gnu)
-(source marmalade)
+(source org)
+(source melpa-stable)
 (source melpa)
+(source marmalade)
 
-(depends-on "auto-package-update")
-(depends-on "bind-key")
+;; Elpy source
+(source "elpy" "http://jorgenschaefer.github.io/packages/")
+
+
+;; Packages
+
 (depends-on "cask")
-(depends-on "dash")
-(depends-on "drag-stuff")
-(depends-on "exec-path-from-shell")
-(depends-on "expand-region")
-(depends-on "f")
 (depends-on "flycheck")
 (depends-on "flycheck-cask")
-(depends-on "htmlize")
-(depends-on "idle-highlight-mode")
-(depends-on "magit")
-(depends-on "multiple-cursors")
-(depends-on "nyan-mode")
-(depends-on "pallet")
-(depends-on "popwin")
-(depends-on "prodigy")
+
+
+;;;; Org-mode
+(depends-on "org-bullets")
+(depends-on "org-plus-contrib")
+(depends-on "calfw")
+
+;;;; Helm + Projectile + Others
 (depends-on "projectile")
-(depends-on "s")
+(depends-on "helm")
+(depends-on "helm-projectile")
+
+;;;; Theme
+(depends-on "fill-column-indicator")
+(depends-on "highlight-indentation")
+(depends-on "rainbow-mode") ;; Show #000 with color
+(depends-on "rainbow-delimiters")
+(depends-on "color-theme")
+(depends-on "powerline")
+(depends-on "emojify")
+
+;;;;;; Other themes not used
+(depends-on "moe-theme")
+(depends-on "atom-one-dark-theme")
+
+;;:: Other must have stuff
 (depends-on "smartparens")
-(depends-on "smex")
-(depends-on "use-package")
-(depends-on "web-mode")
 (depends-on "yasnippet")
+(depends-on "magit")
+(depends-on "sr-speedbar")
+(depends-on "diff-hl")
+(depends-on "clean-aindent-mode")
+
+;;;; Programming
+
+;;;;;; Python
+(depends-on "elpy")
+(depends-on "virtualenvwrapper")
+(depends-on "py-autopep8")
+
+;;;;;; OpenScad
+(depends-on "scad-mode")
+(depends-on "scad-preview")
+
+;;;;;; Latex
+(depends-on "auctex")
+(depends-on "latex-preview-pane")
+
+;;;;;; Markdown
+(depends-on "markdown-mode")
+
+;;;;;; Company and backends
+(depends-on "company")
+(depends-on "company-emoji")
+
+;;;;;; Plot
+(depends-on "gnuplot")
+(depends-on "gnuplot-mode")
+
+;;;; Internet
+(depends-on "tumblesocks")
+(depends-on "google-translate")
+(depends-on "elfeed")
+
+;;;;;; Mail
+(depends-on "offlineimap")
+
+;;;; Unnecessary stuff
+(depends-on "tea-time")

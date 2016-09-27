@@ -30,7 +30,7 @@ xbindkeys &
 #autocutsel -fork &
 #autocutsel -selection PRIMARY -fork &
 # start emacs as a daemon (if not already daemonized)
-#emacs --daemon &
+emacs --daemon &
 # start the notification daemon dunst
 #dunst &
 # hide the mouse cursor when is inactive

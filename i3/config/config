@@ -234,14 +234,12 @@ client.urgent           $red $red $background $red
 
 
 # Programs init
-exec --no-startup-id i3-msg 'workspace '$WS1'; exec emacs -r /mnt/FilesWin/Dropbox/org/TODO.org --execute 
-"(split-window-right)" /mnt/FilesWin/Dropbox/org/Doctorado.org --execute "(split-window-left)" /mnt/FilesWin/Dropbox/org/Cronos.org'
+exec --no-startup-id i3-msg 'workspace '$WS1'; exec emacsclient -c --execute "(fmgb/init-emacs)"'
 exec --no-startup-id i3-msg 'workspace '$WS2'; exec firefox'
 exec --no-startup-id i3-msg 'workspace '$WS3'; exec i3-sensible-terminal'
-
+exec --no-startup-id i3-msg 'workspace '$WS4'; exec emacsclient -c'
 exec --no-startup-id i3-msg 'workspace '$WS5'; exec opera'
 exec --no-startup-id i3-msg 'workspace '$WS6'; exec telegram-desktop'
-#exec --no-startup-id i3-msg 'workspace '$WS1'; exec emacs -r /mnt/hdd/org-files/own.org'
 
 
 

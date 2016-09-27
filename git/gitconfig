@@ -6,7 +6,7 @@
 	email = fmgb92@gmail.com
 
 [core]
-	editor = nano
+    editor = 'emacsclient -c' --wait
 
 [color]
    	ui = true

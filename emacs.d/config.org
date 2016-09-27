@@ -1,6 +1,6 @@
 #+TITLE:     My emacs configuration
-#+AUTHOR:    García Botella, Francisco Manuel
-#+EMAIL:     fmgb92 at gmail dot com
+#+AUTHOR:    Almira Molla, Alejandro
+#+EMAIL:     aalmiramolla at gmail dot com
 #+LANGUAGE:  en
 
 * Notes
@@ -35,7 +35,7 @@ its not necessary to tangle the file each time that emacs is loaded
 * My name and mail
 #+begin_src emacs-lisp :tangle yes
   (setq user-full-name "Francisco Manuel Garcia Botella")
-  (setq user-mail-address "fmgb92 [at] gmail [dot] com")
+  (setq user-mail-address "fmgarcia@dtic.ua.es")
 #+end_src
 * My own directions
 #+BEGIN_SRC emacs-lisp :tangle yes
@@ -43,16 +43,11 @@ its not necessary to tangle the file each time that emacs is loaded
   (setq user-org-files "/mnt/FilesWin/Dropbox/org/")
   (setq user-org-files-mobile user-org-files)
   (setq user-config-dir "~/.emacs.d/")
-
-
+  (setq user-config-dir-i3 "~/.config/i3/")
+  (setq  user-config-xinitrc "~/.xinitrc")
 
 #+END_SRC
 * Package configuration
-** TODO Cask
-#+begin_src emacs-lisp :tangle no
-(require 'cask "~/.cask/cask.el")
-(cask-initialize)
-#+end_src
 ** Package.el
 *** Repositories
 #+begin_src emacs-lisp :tangle yes
@@ -340,6 +335,12 @@ All this need to be reconfigured
   (global-diff-hl-mode)
 
 #+end_src
+** Avoid ask: Symbolic link to Git-controlled source file; follow link? (y or n)
+#+BEGIN_SRC emacs-lisp :tangle yes
+  ;;Source https://gist.github.com/jcouyang/d7cf6c8011b3b9c3f9a7
+  (setq vc-follow-symlinks nil)
+  (setq org-confirm-babel-evaluate nil)
+#+END_SRC
 * Theme
 ** Requires
 #+begin_src emacs-lisp :tangle yes
@@ -804,13 +805,27 @@ All this functions must start with fmgb/
 (global-set-key [(meta shift up)]  'move-line-up)
 (global-set-key [(meta shift down)]  'move-line-down)
 #+end_src
-** Open this file
+** Open files configuration
 A function to open this file more quickly
 #+begin_src emacs-lisp :tangle yes
+  ;; (defun fmgb/set-config-emacs ()
+  ;;   "Show the emacs configuration file"
+  ;;   (interactive)
+  ;;   (find-file (concat user-config-dir "config.org")))
+
+  ;; (defun fmgb/set-config-i3 ()
+  ;;   "Show the emacs configuration file"
+  ;;   (interactive)
+  ;;   (find-file (concat user-config-dir-i3 "config")))
+
   (defun fmgb/set-config ()
-    "Show the emacs configuration file"
+    "Show the configuration files"
     (interactive)
-    (find-file (concat user-config-dir "config.org")))
+    (setq program (read t))
+    (cond ((string= program "i3") (find-file (concat user-config-dir-i3 "config")))
+          ((string= program "emacs") (find-file (concat user-config-dir-emacs "config")))
+          ((string= program "xinitrc") (find-file user-config-xinitrc))
+          ))
 #+end_src
 ** Replace word with Translate
 Replace the current word with the translation
