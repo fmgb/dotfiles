@@ -6,17 +6,17 @@
 * Notes
 ** How to install dependencies of this dotfiles
 First of all, you need to install Cask, for this, type the next command:
-#+begin_src sh
+#+begin_src sh :tangle no
 $curl -fsSL https://raw.githubusercontent.com/cask/cask/master/go | python
 #+end_src
 
 After that, you need to install all python requirements with:
-#+begin_src sh
+#+begin_src sh :tangle no
 $ sudo pip install -r requirements.txt
 #+end_src
 
 Finally, install all emacs packages with:
-#+begin_src sh
+#+begin_src sh :tangle no
 $ cask install
 #+end_src
 ** Other dependencies
@@ -42,9 +42,9 @@ its not necessary to tangle the file each time that emacs is loaded
   ;; Personal directory files
   (setq user-org-files "/mnt/FilesWin/Dropbox/org/")
   (setq user-org-files-mobile user-org-files)
-  (setq user-config-dir "~/.emacs.d/")
+  (setq user-config-dir-emacs "~/.emacs.d/")
   (setq user-config-dir-i3 "~/.config/i3/")
-  (setq  user-config-xinitrc "~/.xinitrc")
+  (setq user-config-xinitrc "~/.xinitrc")
 
 #+END_SRC
 * Package configuration
@@ -53,6 +53,8 @@ its not necessary to tangle the file each time that emacs is loaded
 #+begin_src emacs-lisp :tangle yes
   ;;; Emacs is not a package manager, and here we load its package manager!
   (require 'package)
+  (package-initialize)
+  (elpy-enable)
   (dolist (source '(("marmalade" . "http://marmalade-repo.org/packages/")
                     ("elpa" . "http://tromey.com/elpa/")
                     ("melpa" . "http://melpa.milkbox.net/packages/")
@@ -63,7 +65,6 @@ its not necessary to tangle the file each time that emacs is loaded
 
     (add-to-list 'package-archives source t))
 
-  (package-initialize)
 
 #+end_src
 *** Packages
@@ -71,65 +72,74 @@ its not necessary to tangle the file each time that emacs is loaded
   (when (not package-archive-contents)
     (package-refresh-contents))
   (defvar fmgb/packages '(ecb
-                                  scad-mode
-                                  smartparens
-                                  yasnippet
-                                  magit
-                                  figlet
-                                  sr-speedbar
-                                  diff-hl
-                                  info+
-                                  projectile
-                                  auctex
-                                  latex-preview-pane
-                                  fill-column-indicator
-                                  markdown-mode
-                                  highlight-indentation
-                                  scad-preview
-                                  helm
-                                  helm-projectile
-                                  clean-aindent-mode
-                                  company
-                                  rainbow-mode
-                                  rainbow-delimiters
-                                  color-theme            ;; Themes
-                                  atom-one-dark-theme
-                                  moe-theme
-                                  powerline
-                                  ;; smart-mode-line
-                                  emojify
-                                  company-emoji
-                                  org-bullets            ;; Org-mode
-                                  org-trello
-                                  ;; Me da error org-plus-contrib
-                                  calfw
-                                  gnuplot                ;; Plot
-                                  gnuplot-mode
-                                  tumblesocks            ;; Internet
-                                  google-translate
-                                  w3m
-                                  elfeed
-                                  offlineimap            ;; Mail
-                                  elpy                   ;; Python packages
-                                  virtualenvwrapper
-                                  ;; flycheck
-                                  py-autopep8
-                                  tea-time               ;; Unnecessary stuff, but cool
-                                  auto-package-update
-                                  ))
+                          scad-mode
+                          smartparens
+                          yasnippet
+                          magit
+                          figlet
+                          sr-speedbar
+                          diff-hl
+                          info+
+                          projectile
+                          auctex
+                          latex-preview-pane
+                          fill-column-indicator
+                          markdown-mode
+                          highlight-indentation
+                          scad-preview
+                          helm
+                          helm-projectile
+                          clean-aindent-mode
+                          company
+                          rainbow-mode
+                          rainbow-delimiters
+                          color-theme            ;; Themes
+                          atom-one-dark-theme
+                          moe-theme
+                          autopair
+                          powerline
+                          smart-mode-line
+                          emojify
+                          company-emoji
+                          org-bullets            ;; Org-mode
+                          org-trello
+                          ;; Me da error org-plus-contrib
+                          calfw
+                          gnuplot                ;; Plot
+                          gnuplot-mode
+                          tumblesocks            ;; Internet
+                          google-translate
+                          w3m
+                          elfeed
+                          offlineimap            ;; Mail
+                          elpy                   ;; Python packages
+                          virtualenvwrapper
+                          ;; flycheck
+                          py-autopep8
+                          company-c-headers      ;; C/C++ packages
+                          tea-time               ;; Unnecessary stuff, but cool
+                          auto-package-update
+                          hideshowvis            ;; Hide/show modules in programming
+                          hlinum                 ;; Highlight number of the current line
+                          highlight-numbers
+                          highlight-escape-sequences
+                          highlight-blocks
+                          helm-descbinds         ;; C-z show a helm with commands and shortcuts of the current mode
+                          auto-complete-clang
+                          ))
   (dolist (p fmgb/packages)
     (when (not (package-installed-p p))
       (package-install p)))
 #+end_src
 *** Auto upload
 #+begin_src emacs-lisp :tangle yes
-;; Check if there's an update of packages
-(require 'auto-package-update)
-(auto-package-update-maybe)
+  ;; Check if there's an update of packages
+  ;; (require 'auto-package-update)
+  ;; (auto-package-update-maybe)
 
-(add-hook 'auto-package-update-before-hook
-          (lambda ()
-			(message "I will update packages now")))
+  ;; (add-hook 'auto-package-update-before-hook
+  ;;           (lambda ()
+  ;;             (message "I will update packages now")))
 #+end_src
 ** Load Other files
 Third party .el files
@@ -137,119 +147,27 @@ Third party .el files
   ;;(add-to-list 'load-path "~/.emacs.d/third-party")
 #+end_src
 * General configuration
-** Helm + Projectile
-#+begin_src emacs-lisp :tangle yes
-;; Helm
-;; http://tuhdo.github.io/helm-intro.html
-(require 'helm)
-(require 'helm-config)
+** Backup directory to /tmp
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (message "1")
+  (setq backup-directory-alist
+        `((".*" . ,temporary-file-directory)))
+  (setq auto-save-file-name-transforms
+        `((".*" ,temporary-file-directory t)))
+#+END_SRC
+** Time-stamps
+#+BEGIN_SRC emacs-lisp :tangle yes
+  ;; when there's "Time-stamp: <>" in the first 10 lines of the file
+  (message "Y aqui tambien")
+  (setq time-stamp-active t
+        ;; check first 10 buffer lines for Time-stamp: <>
+        time-stamp-line-limit 5
+        time-stamp-format "%04y-%02m-%02d %02H:%02M:%02S (%u)") ; date format
+  (add-hook 'write-file-hooks 'time-stamp) ; update when saving
+#+END_SRC
 
-;; The default "C-x c" is quite close to "C-x C-c", which quits Emacs.
-;; Changed to "C-c h". Note: We must set "C-c h" globally, because we
-;; cannot change `helm-command-prefix-key' once `helm-config' is loaded.
-(global-set-key (kbd "C-c h") 'helm-command-prefix)
-(global-unset-key (kbd "C-x c"))
-
-(define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebind tab to run persistent action
-(define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB works in terminal
-(define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
-
-(when (executable-find "curl")
-  (setq helm-google-suggest-use-curl-p t))
-
-(setq helm-split-window-in-side-p           t ; open helm buffer inside current window, not occupy whole other window
-      helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
-      helm-ff-search-library-in-sexp        t ; search for library in `require' and `declare-function' sexp.
-      helm-scroll-amount                    8 ; scroll 8 lines other window using M-<next>/M-<prior>
-      helm-ff-file-name-history-use-recentf t)
-
-(helm-mode 1)
-
-(helm-autoresize-mode t) ;; Helm can resize its buffer automatically to fit with the number of candidates by enabling
-
-(global-set-key (kbd "M-x") 'helm-M-x)
-
-(global-set-key (kbd "M-y") 'helm-show-kill-ring) ;Helm shows the kill ring in a readable format and allows you to narrow down by entering sub-strings of candidates
-
-
-;; helm-mini comprises of multiple sources:
-
-;;    Current opening buffers, under the header Buffers.
-;;    Recently opened files, under the header Recentf.
-;;    Allow you to create a new buffer by pressing RET, under the header Create Buffer.
-(global-set-key (kbd "C-x b") 'helm-mini)
-
-;; To enable fuzzy matching, add the following settings:
-(setq helm-buffers-fuzzy-matching t
-      helm-recentf-fuzzy-match    t)
-
-
-(global-set-key (kbd "C-x C-f") 'helm-find-files) ;; Substitute C-x C-f for find files with helm
-
-(global-set-key (kbd "C-c h o") 'helm-occur) ;;  As you type, matching lines are updated immediately
-
-(setq enable-recursive-minibuffers t) ;; https://github.com/emacs-helm/helm/issues/168 
-
-;; Helm and projectile
-;; http://tuhdo.github.io/helm-projectile.html
-(projectile-global-mode)
-(setq projectile-completion-system 'helm)
-(helm-projectile-on)
-
-(setq projectile-switch-project-action 'helm-projectile)
-(setq projectile-enable-caching t)
-#+end_src
-** Dired
-#+begin_src emacs-lisp :tangle yes
-(require 'dired )
-(define-key dired-mode-map (kbd "RET") 'dired-find-alternate-file) ; was dired-advertised-find-file
-(define-key dired-mode-map (kbd "^") (lambda () (interactive) (find-alternate-file "..")))  ; was dired-up-directory
-
-(defun fmgb/dired-mode-setup ()
-  "to be run as hook for `dired-mode'."
-  (dired-hide-details-mode 1))
-
-(add-hook 'dired-mode-hook 'fmgb/dired-mode-setup)
-#+end_src
-** Completion (Company)
-#+begin_src emacs-lisp :tangle yes
-(require 'company)
-(add-hook 'after-init-hook 'global-company-mode)
-(require 'company-emoji)
-#+end_src
-*** Backends
-#+begin_src emacs-lisp :tangle yes
-(add-to-list 'company-backends 'company-emoji)
-#+end_src
-** PROGRESS Reconfigure
-All this need to be reconfigured
-#+begin_src emacs-lisp :tangle yes
-  ;; Reconfigure from here
-  (custom-set-variables
-   ;; custom-set-variables was added by Custom.
-   ;; If you edit it by hand, you could mess it up, so be careful.
-   ;; Your init file should contain only one such instance.
-   ;; If there is more than one, they won't work right.
-   '(erc-modules
-     (quote
-      (autojoin button completion fill irccontrols list match menu move-to-prompt netsplit networks noncommands notifications readonly ring smiley stamp track)))
-   '(org-trello-current-prefix-keybinding "C-c o" nil (org-trello)))
-
-  ;; key for shell
-  (global-set-key [f12] 'ansi-term)
-  (global-set-key [f9] 'cfw:open-org-calendar)
-  (global-set-key [f8] 'sr-speedbar-toggle)
-
-  ;; c/c++
-  (setq-default c-basic-offset 4
-                c-default-style "k&r"
-                tab-width 4
-                indent-tabs-mode t)
-
-
-  ;; ERC
-  (setq erc-hide-list '("JOIN" "PART" "QUIT"))
-
+** Format files
+#+BEGIN_SRC emacs-lisp :tangle yes
   ;; GROUP: Editing -> Editing Basics
   (setq global-mark-ring-max 5000         ; increase mark ring to contains 5000 entries
         mark-ring-max 5000                ; increase kill ring to contains 5000 entries
@@ -267,79 +185,51 @@ All this need to be reconfigured
   (set-keyboard-coding-system 'utf-8)
   (set-language-environment "UTF-8")
   (prefer-coding-system 'utf-8)
-
-
-  (require 'clean-aindent-mode)
-  (add-hook 'prog-mode-hook 'clean-aindent-mode)
-
-  ;; https://www.emacswiki.org/emacs/DeleteSelectionMode
-  (delete-selection-mode)
-
-  ;; Backups
-  (setq make-backup-files nil) ; stop creating backup~ files
-  (setq auto-save-default nil) ; stop creating #autosave# files
-  ;; (setq temporary-file-directory "/tmp/")
-  ;; (setq backup-directory-alist `((".*" . ,temporary-file-directory)))
-  ;; (setq auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
-
-
-  (global-auto-revert-mode 1) ;; for reload file if change in other editor
-  (defalias 'yes-or-no-p 'y-or-n-p) ; y or n is enough
-
-  ;; Tabs identation
-  (setq tab-width 4) ; or any other preferred value
-  (defvaralias 'c-basic-offset 'tab-width)
-  (defvaralias 'cperl-indent-level 'tab-width)
-  (setq-default indent-tabs-mode t)
-  (global-set-key (kbd "RET") 'newline-and-indent)
-
-
-  ;; show important whitespace in diff-mode
-  (add-hook 'diff-mode-hook (lambda ()
-                              (setq-local whitespace-style
-                                          '(face
-                                            tabs
-                                            tab-mark
-                                            spaces
-                                            space-mark
-                                            trailing
-                                            indentation::space
-                                            indentation::tab
-                                            newline
-                                            newline-mark))
-                              (whitespace-mode 1)))
-
-  ;; Package: smartparens
-  (require 'smartparens-config)
-  (setq sp-base-key-bindings 'paredit)
-  (setq sp-autoskip-closing-pair 'always)
-  (setq sp-hybrid-kill-entire-symbol nil)
-  (sp-use-paredit-bindings)
-
-  ;;; yasnippet
-  ;;; should be loaded before auto complete so that they can work together
-  (require 'yasnippet)
-  (add-to-list 'yas-snippet-dirs
-               "~/.emacs.d/snippets")
-  (yas-global-mode 1)
-
-  ;; https://www.emacswiki.org/emacs/DiredReuseDirectoryBuffer
-  (put 'dired-find-alternate-file 'disabled nil)
-
-  ;; Sr-speedbar
-  (require 'sr-speedbar)
-  (setq sr-speedbar-right-side nil) ;; show in left side
-  (setq speedbar-show-unknown-files t) ; show all files
-
-  ;; Diff version control
-  (global-diff-hl-mode)
-
-#+end_src
+#+END_SRC
 ** Avoid ask: Symbolic link to Git-controlled source file; follow link? (y or n)
 #+BEGIN_SRC emacs-lisp :tangle yes
   ;;Source https://gist.github.com/jcouyang/d7cf6c8011b3b9c3f9a7
   (setq vc-follow-symlinks nil)
   (setq org-confirm-babel-evaluate nil)
+#+END_SRC
+** Behavior
+#+BEGIN_SRC emacs-lisp :tangle yes
+  ;; https://www.emacswiki.org/emacs/DeleteSelectionMode
+  (delete-selection-mode)
+
+  (global-auto-revert-mode 1) ;; for reload file if change in other editor
+  (defalias 'yes-or-no-p 'y-or-n-p) ; y or n is enough
+
+  ;; Tabs
+  (set-default 'indent-tabs-mode nil)
+
+  (set-default 'indicate-empty-lines t)
+  (setq-default truncate-lines t)
+
+#+END_SRC
+** [[https://www.emacswiki.org/emacs/DiredReuseDirectoryBuffer][Reuse buffer directory]]
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (put 'dired-find-alternate-file 'disabled nil)
+#+END_SRC
+** After-init-hook
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (add-hook 'after-init-hook (lambda ()
+                               (helm-mode 1)
+                               (helm-descbinds-mode)
+                               (global-flycheck-mode)
+                               (autopair-global-mode)
+                               ;;(global-pretty-mode t)
+                               (global-company-mode)
+                               (projectile-global-mode)
+                               ;;(global-fixmee-mode 1)
+                               ;; (helm-projectile-on)
+                               (eyebrowse-mode t)
+                               ;;(multiple-cursors-mode t)
+                               ;;(emacs-init-time)
+                               ;;(linum-mode 1)
+                               )
+            )
+
 #+END_SRC
 * Theme
 ** Requires
@@ -352,6 +242,25 @@ All this need to be reconfigured
 (require 'fill-column-indicator)
 (require 'emojify)
 #+end_src
+** Windows settings
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (setq inhibit-splash-screen t) ;; Dont show welcome window
+  (scroll-bar-mode -1)
+  (menu-bar-mode -1)
+  (tool-bar-mode -1)
+  (global-linum-mode 1)
+  (global-hl-line-mode 1)
+  (column-number-mode 1)
+  (global-subword-mode 1)
+  (blink-cursor-mode -1)
+
+  (setq truncate-partial-width-windows nil) ;; Dont truncate divide windows lines
+
+  (setq scroll-conservatively 1) ;; scroll de una línea cuando el cursor sale del buffer
+  (setq show-paren-mode t) ;; Mark parenthesis or brackets
+  (eval-after-load "autopair" '(diminish 'autopair-mode)) ; Auto insert brackets
+  (setq transient-mark-mode t) ;; Mark the selected zone
+#+END_SRC
 ** Font
 #+begin_src emacs-lisp :tangle yes
 (add-to-list 'default-frame-alist '(font . "Inconsolata-12"))
@@ -367,8 +276,9 @@ All this need to be reconfigured
 ** Color Theme
 #+begin_src emacs-lisp :tangle yes
 (color-theme-initialize)
-;; (load-theme 'atom-one-dark t)
-(color-theme-monokai)       ;; It can be possible
+(load-theme 'atom-one-dark t)
+;;(load-theme 'monokai t)
+;;(color-theme-monokai)       ;; It can be possible
 #+end_src
 ** Moe Theme
 #+begin_src emacs-lisp :tangle no
@@ -388,9 +298,14 @@ All this need to be reconfigured
 ;; (moe-dark)
 #+end_src
 ** TODO Mode line
-*** Smartline
-#+begin_src emacs-lisp :tangle no
-(sml/setup)
+*** [[https://github.com/Malabarba/smart-mode-line][Smartline]]
+**** TODO check the web page to test sml/shorten-directory and sml/replacer-regexp-list
+#+begin_src emacs-lisp :tangle yes
+  (setq sml/theme 'dark)
+  (setq sml/no-confirm-load-theme t)
+  
+  (sml/setup)
+  ;;(setq sml/thheme 'powerline)
 #+end_src
 *** Powerline
 #+begin_src emacs-lisp :tangle yes
@@ -404,42 +319,37 @@ Show a line in indentation
 #+end_src
 ** TODO Reconfigure
 #+begin_src emacs-lisp :tangle yes
-(setq inhibit-splash-screen t) ;; no mostrar la pantalla de bienvenida
-(scroll-bar-mode -1)
-(menu-bar-mode -1)
-(tool-bar-mode -1)
-(global-linum-mode 1)
-(global-hl-line-mode 1)
-(column-number-mode 1)
-(global-subword-mode 1)
-
-(setq truncate-partial-width-windows nil) ;; no truncar líneas en ventanas divididas
-
-(setq scroll-conservatively 1) ;; scroll de una línea cuando el cursor sale del buffer
-(setq show-paren-mode t) ;; marcar el paréntesis o llave correspondiente
-(setq transient-mark-mode t) ;; marcar la zona seleccionada
-
-
-;; Color for delimiters
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(rainbow-delimiters-depth-1-face ((t (:foreground "blue"))))
- '(rainbow-delimiters-depth-2-face ((t (:foreground "yellow"))))
- '(rainbow-delimiters-depth-3-face ((t (:foreground "green"))))
- '(rainbow-delimiters-depth-4-face ((t (:foreground "gray"))))
- '(rainbow-delimiters-depth-5-face ((t (:foreground "pink"))))
- '(rainbow-delimiters-depth-6-face ((t (:foreground "purple"))))
- '(rainbow-delimiters-depth-7-face ((t (:foreground "white"))))
- '(rainbow-delimiters-depth-8-face ((t (:foreground "#8b7500"))))
- '(rainbow-delimiters-depth-9-face ((t (:foreground "#8b7555"))))
- '(rainbow-delimiters-unmatched-face ((t (:foreground "red"))))
- '(show-paren-match ((((class color) (background light)) (:background "azure2")))))
+  ;; Color for delimiters
+  (custom-set-faces
+   ;; custom-set-faces was added by Custom.
+   ;; If you edit it by hand, you could mess it up, so be careful.
+   ;; Your init file should contain only one such instance.
+   ;; If there is more than one, they won't work right.
+   '(rainbow-delimiters-depth-1-face ((t (:foreground "cyan"))))
+   '(rainbow-delimiters-depth-2-face ((t (:foreground "yellow"))))
+   '(rainbow-delimiters-depth-3-face ((t (:foreground "green"))))
+   '(rainbow-delimiters-depth-4-face ((t (:foreground "white"))))
+   '(rainbow-delimiters-depth-5-face ((t (:foreground "orange"))))
+   '(rainbow-delimiters-depth-6-face ((t (:foreground "purple1"))))
+   '(rainbow-delimiters-depth-7-face ((t (:foreground "hot pink"))))
+   '(rainbow-delimiters-depth-8-face ((t (:foreground "DodgerBlue1"))))
+   '(rainbow-delimiters-depth-9-face ((t (:foreground "red"))))
+   '(rainbow-delimiters-unmatched-face ((t (:foreground "red"))))
+   '(show-paren-match ((((class color) (background light)) (:background "azure2")))))
 #+end_src
-* Text editing
-** Fly check typo errors
+* Major Modes
+** Text editing
+[[https://www.emacswiki.org/emacs/AutoFillMode][AutoFillMode]]
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (add-hook 'text-mode-hook (lambda ()
+                              ;; the limit colum
+                              (set (make-local-variable 'fill-column) 110)
+                              (turn-on-visual-line-mode)
+                              (auto-fill-mode)
+                              (flyspell-mode)))
+
+#+END_SRC
+** Fly check type errors
 #+begin_src emacs-lisp :tangle yes
   (if (executable-find "aspell")
       (progn
@@ -448,105 +358,6 @@ Show a line in indentation
         (setq ispell-dictionary "british"))
     (setq ispell-program-name "ispell"))
 #+end_src
-** Org-mode
-*** TODO General Configuration
-#+begin_src emacs-lisp :tangle yes
-  ;; Show agenda
-  (global-set-key (kbd "C-c a") 'org-agenda)
-  ;; Use templates
-  (global-set-key (kbd "C-c c") 'org-capture)
-
-  (setf org-footnote-auto-adjust t
-  ;;         org-habit-graph-column 55
-        org-directory (expand-file-name user-org-files)
-        org-archive-location (concat org-directory "/archivado.org::* Old and archived entries")
-        org-enforce-todo-dependencies t
-        org-special-ctrl-k t
-        org-ctrl-k-protect-subtree t ;; Evitamos perder todo el arbol
-        org-catch-invisible-edits 'show
-        org-return-follow-link t
-        ;;org-blank-before-new-entry t
-        org-startup-indented t
-        org-startup-folded t
-        org-imenu-depth 5
-        org-log-done 'time
-        org-clock-persist 'history
-        org-default-notes-file (concat org-directory "/notes.org")         
-        org-mobile-directory (expand-file-name user-org-files-mobile)
-        org-mobile-inbox-for-pull (concat org-directory "/notes_mobile.org")        
-        ;; Conjuntos de TODO
-        org-todo-keywords
-        '((sequence "TODO(t)" "PROGRESS(p)" "REVIEW(r)" "|" "DONE(d)")
-          (sequence "INBOX(i)" "THISMONTH(m)" "THISWEEK(s)" "TODAY(h)" "|" "DONE(d)")
-          (sequence "BUG(b)" "KNOWNCASE(k)" "REVIEW(r)" "|" "FIXED(f)")
-          (sequence "|" "CANCELLED(c)"))
-        
-        org-todo-keyword-faces '(
-                                 ("TODO" . (:foreground "black" :background "#454500" :weight bold))
-                                 ("PROGRESS" . (:foreground "black" :background "#ffa500" :weight bold))
-                                 ("WAITING" . (:foreground "black" :background "#0000ff" :weight bold))
-                                 ("DONE" . (:foreground "black" :background "#32cd32" :weight bold))
-                                 ("REVIEW" . (:foreground "black" :background "#ffff00" :weight bold))
-                                 ("BUG" . (:foreground "black" :background "#ff0000" :weight bold))
-                                 ("KNOWCASE" . (:foreground "black" :background "#ff00ff" :weight bold))
-                                 ("FIXED" . (:foreground "black" :background "#00ffff" :weight bold))
-                                 ("CANCELLED" . (:foreground "black" :background "#8b0000" :weight bold))
-                                 )
-        )
-
-  (setq org-agenda-files (list
-                          (concat org-directory "/own.org")
-                          (concat org-directory "/work.org")))
-#+end_src
-*** Open each file with their program
-#+begin_src emacs-lisp :tangle yes
-(setq org-file-apps
-      '((auto-mode . emacs)
-        ("\\.x?html?\\'" . "firefox %s")
-        ("\\.pdf\\'" . "zathura \"%s\"")))
-#+end_src
-*** Org-templates
-#+BEGIN_SRC emacs-lisp :tangle yes
-  ;; Conjunto de templates
-  (setq org-capture-templates '(
-                                ("a" "Bookmark" entry(file+headline (concat org-directory "/own.org") "Bookmarks")
-                                 "** %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :empty-lines 1)
-                                ("b" "Bugs")
-                                ("ba" "Bug ArchLinux" entry(file+headline (concat org-directory "/errors.org") "ArchLinux")
-                                 "** %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :empty-lines 1)
-                                ("be" "Bug Emacs" entry(file+headline (concat org-directory "/errors.org") "Emacs")
-                                 "** %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :empty-lines 1)
-                                ))
-
-#+END_SRC
-*** Calendar
-#+begin_src emacs-lisp :tangle yes
-;; Calendar view
-(require 'calfw-org)
-
-;; Month
-(setq calendar-month-name-array
-  ["January" "February" "March"     "April"   "May"      "June"
-   "July"    "August"   "September" "October" "November" "December"])
-
-;; Week days
-(setq calendar-day-name-array
-      ["Sunday" "Monday" "Tuesday" "Wednesday" "Thursday" "Friday" 
-"Saturday"])
-
-;; First day of the week
-(setq calendar-week-start-day 1) ; 0:Sunday, 1:Monday
-#+end_src
-*** Pretty bullets
-#+begin_src emacs-lisp :tangle yes
-;; https://github.com/sabof/org-bullets
-(require 'org-bullets)
-(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-#+end_src
-*** Check words in org-mode
-#+begin_src emacs-lisp :tangle yes
-(add-hook 'org-mode-hook 'flyspell-mode)
-#+end_src
 ** Markdown
 #+begin_src emacs-lisp :tangle yes
 (add-to-list 'auto-mode-alist '("\\.text\\'" . markdown-mode))
@@ -554,29 +365,47 @@ Show a line in indentation
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 (setq markdown-command "markdown")
 #+end_src
-** Latex
-*** General Configuration
-#+begin_src emacs-lisp :tangle yes
-(setq TeX-auto-save t)
-(setq TeX-parse-self t)
-(setq TeX-PDF-mode t)
-(setq TeX-command "latex -shell-escape")
-(setq-default TeX-master nil)
+** Programming
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (autoload 'hideshowvis-enable "hideshowvis" "Highlight foldable regions")
+  (require 'hlinum)
+  (add-hook 'prog-mode-hook (lambda ()
+                              ;; limit buffer 79 chars in each line.
+                              (set (make-local-variable 'fill-column) 79)
+                              (set (make-local-variable 'comment-auto-fill-only-comments) t)
 
-(add-hook 'LaTeX-mode-hook 'visual-line-mode)
-(add-hook 'LaTeX-mode-hook 'auto-fill-mode)
-(add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
-(add-hook 'LaTeX-mode-hook 'turn-on-reftex)
-(setq reftex-plug-into-AUCTeX t)
+                              (auto-fill-mode t)
+                              (toggle-truncate-lines)
+                              (highlight-numbers-mode)
+                              (hes-mode)
+                              (highlight-blocks-mode)
+                              (hlinum-activate)
+                              ;;                              (hlinum-highlight-current-line)
+                              (hs-minor-mode)
+                              (global-company-mode)
+                              ;;(electric-pair-mode)
+                              (flyspell-prog-mode)
+                              (rainbow-delimiters-mode)
+                              (hideshowvis-enable)
+                              (projectile-global-mode)
+                              (clean-aindent-mode)
+                              (global-flycheck-mode)
+                              ;; Comment-region programm key.
+                              ;;(define-key commentline (kbd "C-c ;") 'comment-region)
+                              ))
 
-(latex-preview-pane-enable)
-#+end_src
-*** Check words in LaTeX
-#+begin_src emacs-lisp :tangle yes
-(add-hook 'text-mode-hook 'flyspell-mode)
-#+end_src
-* Programming
+  ;; Redefine "RET" to prog-mode.
+  (define-key prog-mode-map (kbd "RET") 'newline-and-indent)
+#+END_SRC
 ** General
+#+BEGIN_SRC emacs-lisp :tangle yes
+  ;; Tabs identation
+    (setq tab-width 4) ; or any other preferred value
+    (defvaralias 'c-basic-offset 'tab-width)
+    (defvaralias 'cperl-indent-level 'tab-width)
+    (setq-default indent-tabs-mode t)
+    (global-set-key (kbd "RET") 'newline-and-indent)
+#+END_SRC
 *** Requires
 <<req_prog>>
 #+begin_src emacs-lisp :tangle yes
@@ -597,6 +426,10 @@ All requires about appearance are in [[Theme]], the other in [[req_prog][Program
   (add-hook 'prog-mode-hook 'flyspell-prog-mode)
   ;; Show a line in fill-column
   (add-hook 'prog-mode-hook 'fci-mode)
+  ;; No sé ahora mismo que hace
+  (require 'clean-aindent-mode)
+  (add-hook 'prog-mode-hook 'clean-aindent-mode)
+
 #+end_src
 *** Extensions
 Set extensions to specific mode
@@ -629,6 +462,57 @@ Set extensions to specific mode
 #+end_src
 ** Languages
 *** C/C++
+**** C-IDE
+#+BEGIN_SRC emacs-lisp :tangle yes
+  ;; company-c-headers
+  (use-package company-c-headers
+    :init
+    (add-to-list 'company-backends 'company-c-headers))
+
+  ;; hs-minor-mode for folding source code
+  (add-hook 'c-mode-common-hook 'hs-minor-mode)
+
+  ;; Available C style:
+  ;; “gnu”: The default style for GNU projects
+  ;; “k&r”: What Kernighan and Ritchie, the authors of C used in their book
+  ;; “bsd”: What BSD developers use, aka “Allman style” after Eric Allman.
+  ;; “whitesmith”: Popularized by the examples that came with Whitesmiths C, an early commercial C compiler.
+  ;; “stroustrup”: What Stroustrup, the author of C++ used in his book
+  ;; “ellemtel”: Popular C++ coding standards as defined by “Programming in C++, Rules and Recommendations,” Erik Nyquist and Mats Henricson, Ellemtel
+  ;; “linux”: What the Linux developers use for kernel development
+  ;; “python”: What Python developers use for extension modules
+  ;; “java”: The default style for java-mode (see below)
+  ;; “user”: When you want to define your own style
+  ;(setq c-default-style 1) "linux" ;; set style to "linux"
+
+  ;; (use-package cc-mode
+  ;;   :init
+  ;;   (define-key c-mode-map  [(tab)] 'company-complete)
+  ;;   (define-key c++-mode-map  [(tab)] 'company-complete))
+#+END_SRC
+**** CEDET
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (require 'cc-mode)
+  (require 'semantic)
+
+  (global-semanticdb-minor-mode 1)
+  (global-semantic-idle-scheduler-mode 1)
+  (global-semantic-stickyfunc-mode 1)
+
+  (semantic-mode 1)
+
+  (defun alexott/cedet-hook ()
+    (local-set-key "\C-c\C-j" 'semantic-ia-fast-jump)
+    (local-set-key "\C-c\C-s" 'semantic-ia-show-summary))
+
+  (add-hook 'c-mode-common-hook 'alexott/cedet-hook)
+  (add-hook 'c-mode-hook 'alexott/cedet-hook)
+  (add-hook 'c++-mode-hook 'alexott/cedet-hook)
+
+  ;; Enable EDE only in C/C++
+  (require 'ede)
+  (global-ede-mode)
+#+END_SRC
 *** Python
 **** Pretty appearance
 #+begin_src emacs-lisp :tangle yes
@@ -672,6 +556,26 @@ Set extensions to specific mode
   (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
 
 #+end_src
+** [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Diff-Mode.html][Diff]]
+#+BEGIN_SRC emacs-lisp :tangle yes
+  ;; Diff version control
+  (global-diff-hl-mode)
+#+END_SRC
+
+* Teclas Globales
+#+BEGIN_SRC emacs-lisp :tangle yes
+  ;; key for shell
+  (global-set-key [f12] 'ansi-term)
+  (global-set-key [f9] 'cfw:open-org-calendar)
+  (global-set-key [f8] 'sr-speedbar-toggle)
+
+  ;; Discover my major
+  (global-set-key (kbd "C-h C-m") 'discover-my-major)
+
+  ;; Disable C-z
+  (global-unset-key (kbd "C-z"))
+
+#+END_SRC
 * Internet and communication
 ** Mail
 All the things are done with this links:
@@ -783,6 +687,286 @@ Null prefix argument turns off the mode."
 (require 'tea-time)
 (setq tea-time-sound "~/.emacs.d/sounds/r2-d2.wav")
 #+end_src
+* Minor-modes
+** C/C++
+#+BEGIN_SRC emacs-lisp :tangle yes
+  ;; c/c++
+  (setq-default c-basic-offset 4
+                c-default-style "k&r"
+                tab-width 4
+                indent-tabs-mode t)
+#+END_SRC
+** Completion (Company)
+#+begin_src emacs-lisp :tangle yes
+(require 'company)
+(add-hook 'after-init-hook 'global-company-mode)
+(require 'company-emoji)
+#+end_src
+*** Backends
+#+begin_src emacs-lisp :tangle yes
+(add-to-list 'company-backends 'company-emoji)
+#+end_src
+
+** Diff
+#+BEGIN_SRC emacs-lisp :tangle yes
+  ;; show important whitespace in diff-mode
+  (add-hook 'diff-mode-hook (lambda ()
+                              (setq-local whitespace-style
+                                          '(face
+                                            tabs
+                                            tab-mark
+                                            spaces
+                                            space-mark
+                                            trailing
+                                            indentation::space
+                                            indentation::tab
+                                            newline
+                                            newline-mark))
+                              (whitespace-mode 1)))
+#+END_SRC
+** Dired
+#+begin_src emacs-lisp :tangle yes
+(require 'dired )
+(define-key dired-mode-map (kbd "RET") 'dired-find-alternate-file) ; was dired-advertised-find-file
+(define-key dired-mode-map (kbd "^") (lambda () (interactive) (find-alternate-file "..")))  ; was dired-up-directory
+
+(defun fmgb/dired-mode-setup ()
+  "to be run as hook for `dired-mode'."
+  (dired-hide-details-mode 1))
+
+(add-hook 'dired-mode-hook 'fmgb/dired-mode-setup)
+#+end_src
+
+** ERC
+#+BEGIN_SRC emacs-lisp :tangle yes
+  ;; ERC
+  (setq erc-hide-list '("JOIN" "PART" "QUIT"))
+   '(erc-modules
+     (quote
+      (autojoin button completion fill irccontrols list match menu move-to-prompt netsplit networks noncommands notifications readonly ring smiley stamp track)))
+#+END_SRC
+** Helm + Projectile
+*** TODO 
+**** helm-projectile-find-other-file C-c p a
+
+*** Configurated
+#+begin_src emacs-lisp :tangle yes
+  ;; Helm
+  ;; http://tuhdo.github.io/helm-intro.html
+  (require 'helm)
+  (require 'helm-config)
+
+  ;; The default "C-x c" is quite close to "C-x C-c", which quits Emacs.
+  ;; Changed to "C-c h". Note: We must set "C-c h" globally, because we
+  ;; cannot change `helm-command-prefix-key' once `helm-config' is loaded.
+  (global-set-key (kbd "C-c h") 'helm-command-prefix)
+  (global-unset-key (kbd "C-x c"))
+
+  (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebind tab to run persistent action
+  (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB works in terminal
+  (define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
+
+  (when (executable-find "curl")
+    (setq helm-google-suggest-use-curl-p t))
+
+  (setq helm-split-window-in-side-p           t ; open helm buffer inside current window, not occupy whole other window
+        helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
+        helm-ff-search-library-in-sexp        t ; search for library in `require' and `declare-function' sexp.
+        helm-scroll-amount                    8 ; scroll 8 lines other window using M-<next>/M-<prior>
+        helm-ff-file-name-history-use-recentf t)
+
+  (helm-mode 1)
+
+  (helm-autoresize-mode t) ;; Helm can resize its buffer automatically to fit with the number of candidates by enabling
+
+  (global-set-key (kbd "M-x") 'helm-M-x)
+
+  (global-set-key (kbd "M-y") 'helm-show-kill-ring) ;Helm shows the kill ring in a readable format and allows you to narrow down by entering sub-strings of candidates
+
+
+  ;; helm-mini comprises of multiple sources:
+
+  ;;    Current opening buffers, under the header Buffers.
+  ;;    Recently opened files, under the header Recentf.
+  ;;    Allow you to create a new buffer by pressing RET, under the header Create Buffer.
+  (global-set-key (kbd "C-x b") 'helm-mini)
+
+  ;; To enable fuzzy matching, add the following settings:
+  (setq helm-buffers-fuzzy-matching t
+        helm-recentf-fuzzy-match    t)
+
+
+  (global-set-key (kbd "C-x C-f") 'helm-find-files) ;; Substitute C-x C-f for find files with helm
+
+  (global-set-key (kbd "C-c h o") 'helm-occur) ;;  As you type, matching lines are updated immediately
+
+  (setq enable-recursive-minibuffers t) ;; https://github.com/emacs-helm/helm/issues/168 
+
+  ;; Helm and projectile
+  ;; http://tuhdo.github.io/helm-projectile.html
+  (projectile-global-mode)
+  (setq projectile-completion-system 'helm)
+  (helm-projectile-on)
+
+  (setq projectile-switch-project-action 'helm-projectile)
+  (setq projectile-enable-caching t)
+#+end_src
+
+** Latex
+*** General Configuration
+#+begin_src emacs-lisp :tangle yes
+(setq TeX-auto-save t)
+(setq TeX-parse-self t)
+(setq TeX-PDF-mode t)
+(setq TeX-command "latex -shell-escape")
+(setq-default TeX-master nil)
+
+(add-hook 'LaTeX-mode-hook 'visual-line-mode)
+(add-hook 'LaTeX-mode-hook 'auto-fill-mode)
+(add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
+(add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+(setq reftex-plug-into-AUCTeX t)
+
+(latex-preview-pane-enable)
+#+end_src
+*** Check words in LaTeX
+#+begin_src emacs-lisp :tangle yes
+(add-hook 'text-mode-hook 'flyspell-mode)
+#+end_src
+
+** Org-mode
+*** TODO General Configuration
+#+begin_src emacs-lisp :tangle yes
+  ;; Show agenda
+  (global-set-key (kbd "C-c a") 'org-agenda)
+  ;; Use templates
+  (global-set-key (kbd "C-c c") 'org-capture)
+
+  (setf org-footnote-auto-adjust t
+  ;;         org-habit-graph-column 55
+        org-directory (expand-file-name user-org-files)
+        org-archive-location (concat org-directory "/archivado.org::* Old and archived entries")
+        org-enforce-todo-dependencies t
+        org-special-ctrl-k t
+        org-ctrl-k-protect-subtree t ;; Evitamos perder todo el arbol
+        org-catch-invisible-edits 'show
+        org-return-follow-link t
+        ;;org-blank-before-new-entry t
+        org-startup-indented t
+        org-startup-folded t
+        org-imenu-depth 5
+        org-log-done 'time
+        org-clock-persist 'history
+        org-default-notes-file (concat org-directory "/notes.org")         
+        org-mobile-directory (expand-file-name user-org-files-mobile)
+        org-mobile-inbox-for-pull (concat org-directory "/notes_mobile.org")        
+        ;; Conjuntos de TODO
+        org-todo-keywords
+        '((sequence "TODO(t)" "PROGRESS(p)" "REVIEW(r)" "|" "DONE(d)")
+          (sequence "INBOX(i)" "THISMONTH(m)" "THISWEEK(s)" "TODAY(h)" "|" "DONE(d)")
+          (sequence "BUG(b)" "KNOWNCASE(k)" "REVIEW(r)" "|" "FIXED(f)")
+          (sequence "|" "CANCELLED(c)"))
+        
+        org-todo-keyword-faces '(
+                                 ("TODO" . (:foreground "black" :background "#454500" :weight bold))
+                                 ("PROGRESS" . (:foreground "black" :background "#ffa500" :weight bold))
+                                 ("WAITING" . (:foreground "black" :background "#0000ff" :weight bold))
+                                 ("DONE" . (:foreground "black" :background "#32cd32" :weight bold))
+                                 ("REVIEW" . (:foreground "black" :background "#ffff00" :weight bold))
+                                 ("BUG" . (:foreground "black" :background "#ff0000" :weight bold))
+                                 ("KNOWCASE" . (:foreground "black" :background "#ff00ff" :weight bold))
+                                 ("FIXED" . (:foreground "black" :background "#00ffff" :weight bold))
+                                 ("CANCELLED" . (:foreground "black" :background "#8b0000" :weight bold))
+                                 )
+        )
+
+  (setq org-agenda-files (list
+                          (concat org-directory "/own.org")
+                          (concat org-directory "/work.org")))
+#+end_src
+*** Open each file with their program
+#+begin_src emacs-lisp :tangle yes
+(setq org-file-apps
+      '((auto-mode . emacs)
+        ("\\.x?html?\\'" . "firefox %s")
+        ("\\.pdf\\'" . "zathura \"%s\"")))
+#+end_src
+*** Org-templates
+#+BEGIN_SRC emacs-lisp :tangle yes
+  ;; Conjunto de templates
+  (setq org-capture-templates '(
+                                ("a" "Bookmark" entry(file+headline (concat org-directory "/own.org") "Bookmarks")
+                                 "** %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :empty-lines 1)
+                                ("b" "Bugs")
+                                ("ba" "Bug ArchLinux" entry(file+headline (concat org-directory "/errors.org") "ArchLinux")
+                                 "** %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :empty-lines 1)
+                                ("be" "Bug Emacs" entry(file+headline (concat org-directory "/errors.org") "Emacs")
+                                 "** %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :empty-lines 1)
+                                ))
+
+#+END_SRC
+*** Calendar
+#+begin_src emacs-lisp :tangle yes
+;; Calendar view
+(require 'calfw-org)
+
+;; Month
+(setq calendar-month-name-array
+  ["January" "February" "March"     "April"   "May"      "June"
+   "July"    "August"   "September" "October" "November" "December"])
+
+;; Week days
+(setq calendar-day-name-array
+      ["Sunday" "Monday" "Tuesday" "Wednesday" "Thursday" "Friday" 
+"Saturday"])
+
+;; First day of the week
+(setq calendar-week-start-day 1) ; 0:Sunday, 1:Monday
+#+end_src
+*** Pretty bullets
+#+begin_src emacs-lisp :tangle yes
+;; https://github.com/sabof/org-bullets
+(require 'org-bullets)
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+#+end_src
+*** Check words in org-mode
+#+begin_src emacs-lisp :tangle yes
+(add-hook 'org-mode-hook 'flyspell-mode)
+#+end_src
+
+*** Org-trello
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (require 'org-trello)
+  ;;(custom-set-variables '(org-trello-files '("/path/to/file0" "/path/to/file1")))
+#+END_SRC
+
+** [[https://github.com/Fuco1/smartparens][Smartparens]]
+#+BEGIN_SRC emacs-lisp :tangle yes
+  ;; Package: smartparens
+  ;;TODO
+  (require 'smartparens-config)
+  (setq sp-base-key-bindings 'paredit)
+  (setq sp-autoskip-closing-pair 'always)
+  (setq sp-hybrid-kill-entire-symbol nil)
+  (sp-use-paredit-bindings)
+#+END_SRC
+** Speedbar
+#+BEGIN_SRC emacs-lisp :tangle yes
+  ;; Sr-speedbar
+  (require 'sr-speedbar)
+  (setq sr-speedbar-right-side nil) ;; show in left side
+  (setq speedbar-show-unknown-files t) ; show all files
+
+#+END_SRC
+** Yasnippet
+#+BEGIN_SRC emacs-lisp :tangle yes
+  ;;; yasnippet
+  ;;; should be loaded before auto complete so that they can work together
+  (require 'yasnippet)
+  (add-to-list 'yas-snippet-dirs
+               "~/.emacs.d/snippets")
+  (yas-global-mode 1)
+#+END_SRC
 * Own functions
 All this functions must start with fmgb/
 ** Move lines
@@ -821,11 +1005,13 @@ A function to open this file more quickly
   (defun fmgb/set-config ()
     "Show the configuration files"
     (interactive)
+    (message "(i3, emacs, xinitrc)")
     (setq program (read t))
-    (cond ((string= program "i3") (find-file (concat user-config-dir-i3 "config")))
-          ((string= program "emacs") (find-file (concat user-config-dir-emacs "config")))
-          ((string= program "xinitrc") (find-file user-config-xinitrc))
-          ))
+    (cond
+     ((string= program "i3") (find-file (concat user-config-dir-i3 "config")))
+     ((string= program "emacs") (find-file (concat user-config-dir-emacs "config.org")))
+     ((string= program "xinitrc") (find-file user-config-xinitrc))
+     ))
 #+end_src
 ** Replace word with Translate
 Replace the current word with the translation
@@ -891,3 +1077,7 @@ A function to open init files org
 #+begin_src emacs-lisp :tangle yes
 ;;(require 'fmgb-company)
 #+end_src
+* Control init time
+#+BEGIN_SRC emacs-lisp :tangle yes
+  ;;(message "Total elapsed: %s" (float-time (time-subtract (current-time) t-start)))
+#+END_SRC

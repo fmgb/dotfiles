@@ -185,12 +185,14 @@ bindsym $mod+r mode "resize"
 
 for_window [class="^Galculator$"] floating enable
 #for_windwos [class="I3-exit"] floating enable
-
+assign [class="^uzbl-browser"] → $WS1
 assign [class="^Firefox$"] → $WS2
+assign [class="^emacsclient"] → $WS4
 #assign [class="^Tmux$"] → $WS3
 assign [class="^Opera$"] → $WS5
 assign [class="^telegram-desktop$"] → $WS6
 assign [class="^Evince$"] → $WS7
+assign [class="^Slack"]→ $WS9
 assign [class="^Vlc$"] → $WS0
 
 # colours
@@ -234,13 +236,14 @@ client.urgent           $red $red $background $red
 
 
 # Programs init
-exec --no-startup-id i3-msg 'workspace '$WS1'; exec emacsclient -c --execute "(fmgb/init-emacs)"'
+#exec --no-startup-id i3-msg 'workspace '$WS1'; exec emacsclient -c -e "(fmgb/init-emacs)"'
+exec --no-startup-id i3-msg 'workspace '$WS1'; exec emacsclient -c ~/TODO.org'
 exec --no-startup-id i3-msg 'workspace '$WS2'; exec firefox'
 exec --no-startup-id i3-msg 'workspace '$WS3'; exec i3-sensible-terminal'
 exec --no-startup-id i3-msg 'workspace '$WS4'; exec emacsclient -c'
 exec --no-startup-id i3-msg 'workspace '$WS5'; exec opera'
 exec --no-startup-id i3-msg 'workspace '$WS6'; exec telegram-desktop'
-
+exec --no-startup-id i3-msg 'workspace '$WS9'; exec spotify'
 
 
 
@@ -260,7 +263,6 @@ bindsym $mod+t exec --no-startup-id "~/dotfiles/scripts/translation-firefox.sh"
 #bindsym XF86AudioRaiseVolume exec amixer -q set Master 2dB+ unmute
 #bindsym XF86AudioLowerVolume exec amixer -q set Master 2dB- unmute
 #bindsym XF86AudioMute exec amixer -q set Master toggle
-bindsym $mod+c exec --no-startup-id galculator
 bindsym XF86Display exec "arandr"
 bindsym $mod+m exec --no-startup-id "firefox --new-tab https://inbox.google.com/u/0/?pli=1"
 bindsym $mod+g exec --no-startup-id "galculator"

@@ -6,7 +6,7 @@
 	email = fmgb92@gmail.com
 
 [core]
-    editor = 'emacsclient -c' --wait
+	editor = emacsclient -c
 
 [color]
    	ui = true
