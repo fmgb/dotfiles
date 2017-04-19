@@ -99,8 +99,8 @@ its not necessary to tangle the file each time that emacs is loaded
                           autopair
                           powerline
                           smart-mode-line
-                          emojify
-                          company-emoji
+                          ;;emojify
+		          ;;company-emoji
                           org-bullets            ;; Org-mode
                           org-trello
                           ;; Me da error org-plus-contrib
@@ -240,7 +240,7 @@ Third party .el files
 (require 'rainbow-delimiters)
 (require 'highlight-indentation)
 (require 'fill-column-indicator)
-(require 'emojify)
+;;(require 'emojify)
 #+end_src
 ** Windows settings
 #+BEGIN_SRC emacs-lisp :tangle yes
@@ -271,7 +271,7 @@ Third party .el files
 #+end_src
 *** Emoji
 #+begin_src emacs-lisp :tangle yes
-  (add-hook 'after-init-hook #'global-emojify-mode)
+  ;;(add-hook 'after-init-hook #'global-emojify-mode)
 #+end_src
 ** Color Theme
 #+begin_src emacs-lisp :tangle yes
@@ -516,7 +516,12 @@ Set extensions to specific mode
 *** Python
 **** Pretty appearance
 #+begin_src emacs-lisp :tangle yes
-(add-hook 'python-mode-hook 'highlight-indentation-mode)
+  (add-hook 'python-mode-hook
+            (lambda()
+              (setq-default indent-tabs-mode t)
+              (setq-default tab-width 4)
+              (setq-default py-indent-tabs-mode t)
+              (add-to-list 'write-file-functions 'delete-trailing-whitespace)))
 #+end_src
 **** Elpy
 #+begin_src emacs-lisp :tangle yes
@@ -700,11 +705,11 @@ Null prefix argument turns off the mode."
 #+begin_src emacs-lisp :tangle yes
 (require 'company)
 (add-hook 'after-init-hook 'global-company-mode)
-(require 'company-emoji)
+;;(require 'company-emoji)
 #+end_src
 *** Backends
 #+begin_src emacs-lisp :tangle yes
-(add-to-list 'company-backends 'company-emoji)
+;;(add-to-list 'company-backends 'company-emoji)
 #+end_src
 
 ** Diff
