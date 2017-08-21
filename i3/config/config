@@ -333,7 +333,7 @@ bar {
     status_command py3status -c $HOME/.config/i3/config_i3status
     position          top
     #output LVDS1
-    tray_output LVDS1
+    tray_output primary
     		separator_symbol "|"
 		workspace_buttons yes
 		strip_workspace_numbers no

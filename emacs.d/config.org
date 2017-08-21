@@ -100,7 +100,7 @@ its not necessary to tangle the file each time that emacs is loaded
                           powerline
                           smart-mode-line
                           ;;emojify
-		          ;;company-emoji
+                          ;;company-emoji
                           org-bullets            ;; Org-mode
                           org-trello
                           ;; Me da error org-plus-contrib
@@ -126,6 +126,7 @@ its not necessary to tangle the file each time that emacs is loaded
                           highlight-blocks
                           helm-descbinds         ;; C-z show a helm with commands and shortcuts of the current mode
                           auto-complete-clang
+                          web-mode
                           ))
   (dolist (p fmgb/packages)
     (when (not (package-installed-p p))
@@ -216,14 +217,14 @@ Third party .el files
   (add-hook 'after-init-hook (lambda ()
                                (helm-mode 1)
                                (helm-descbinds-mode)
-                               (global-flycheck-mode)
+                               ;; (global-flycheck-mode)
                                (autopair-global-mode)
                                ;;(global-pretty-mode t)
                                (global-company-mode)
                                (projectile-global-mode)
                                ;;(global-fixmee-mode 1)
                                ;; (helm-projectile-on)
-                               (eyebrowse-mode t)
+                               ;;(eyebrowse-mode t)
                                ;;(multiple-cursors-mode t)
                                ;;(emacs-init-time)
                                ;;(linum-mode 1)
@@ -258,7 +259,7 @@ Third party .el files
 
   (setq scroll-conservatively 1) ;; scroll de una línea cuando el cursor sale del buffer
   (setq show-paren-mode t) ;; Mark parenthesis or brackets
-  (eval-after-load "autopair" '(diminish 'autopair-mode)) ; Auto insert brackets
+  ;;(eval-after-load "autopair" '(diminish 'autopair-mode)) ; Auto insert brackets
   (setq transient-mark-mode t) ;; Mark the selected zone
 #+END_SRC
 ** Font
@@ -333,7 +334,7 @@ Show a line in indentation
    '(rainbow-delimiters-depth-6-face ((t (:foreground "purple1"))))
    '(rainbow-delimiters-depth-7-face ((t (:foreground "hot pink"))))
    '(rainbow-delimiters-depth-8-face ((t (:foreground "DodgerBlue1"))))
-   '(rainbow-delimiters-depth-9-face ((t (:foreground "red"))))
+   ;;'(rainbow-delimiters-depth-9-face ((t (:foreground "red"))))
    '(rainbow-delimiters-unmatched-face ((t (:foreground "red"))))
    '(show-paren-match ((((class color) (background light)) (:background "azure2")))))
 #+end_src
@@ -389,7 +390,7 @@ Show a line in indentation
                               (hideshowvis-enable)
                               (projectile-global-mode)
                               (clean-aindent-mode)
-                              (global-flycheck-mode)
+                              ;;(global-flycheck-mode)
                               ;; Comment-region programm key.
                               ;;(define-key commentline (kbd "C-c ;") 'comment-region)
                               ))
@@ -465,9 +466,9 @@ Set extensions to specific mode
 **** C-IDE
 #+BEGIN_SRC emacs-lisp :tangle yes
   ;; company-c-headers
-  (use-package company-c-headers
-    :init
-    (add-to-list 'company-backends 'company-c-headers))
+  ;;(use-package company-c-headers
+  ;;  :init
+    ;;(add-to-list 'company-backends 'company-c-headers))
 
   ;; hs-minor-mode for folding source code
   (add-hook 'c-mode-common-hook 'hs-minor-mode)

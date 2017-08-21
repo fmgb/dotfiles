@@ -14,7 +14,7 @@ fi
 export EDITOR="emacsclient"
 
 # start emacs as a daemon (if not already daemonized)
-emacs --daemon &
+#emacs --daemon &
 
 #Activar distribución del teclado.
 #Active keyboard's distribution
@@ -29,8 +29,7 @@ xbindkeys &
 
 
 # start autocutsel to admin only one clipboard
-#autocutsel -fork &
-#autocutsel -selection PRIMARY -fork &
+clipit &
 # start the notification daemon dunst
 #dunst &
 # hide the mouse cursor when is inactive

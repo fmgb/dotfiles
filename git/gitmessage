@@ -1,4 +1,4 @@
-# {TAGNAME} = [FEATURE, BUGFIX, TASK, CLEANUP, API]
+# {TAGNAME} = [FEATURE, BUGFIX, TASK, CLEANUP, API, DOC]
 [{TAGNAME}] {short-description}
 
 {long-description}
