@@ -190,6 +190,9 @@ bindcode $mod+Shift+26 exec "i3-nagbar -t warning -m 'You pressed the exit short
 
 #bindsym XF86PowerOff exec $dir/i3-exit
 
+# move firefox to current workspace
+bindsym $mod+F1 [class="Firefox"] move workspace current
+
 #Lock i3
 bindsym $mod+q exec $dir/i3-lock
 
@@ -222,17 +225,15 @@ bindsym $mod+r mode "resize"
 # Assigns
 
 for_window [class="^Galculator$"] floating enable
-#for_windwos [class="I3-exit"] floating enable
-# assign [class="^uzbl-browser"] → $WS1
+
 assign [class="^Firefox$"] → $WS2
-assign [class="(?i)code"] → $WS4
+assign [class="Code"] → $WS4
 # assign [class="^Tmux$"] → $WS3
 assign [class="(?i)opera"] → $WS5
-assign [class="(?i)telegram-desktop"] → $WS6
-assign [class="(?i)okular"] → $WS7
-assign [class="(?i)spotify"]→ $WS9
+assign [class="TelegramDesktop"] → $WS6
+assign [class="okular"] → $WS7
+assign [class="Spotify"]→ $WS9
 assign [class="(?i)vlc"] → $WS0
-#assign [class="^visual-studio-code"] → $WS4
 
 assign [class="(?i)slic3r"] → $CWS1
 assign [class="(?i)chromium"] → $CWS2
