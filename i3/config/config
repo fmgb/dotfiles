@@ -13,7 +13,7 @@ set $mod Mod4
 
 # Default programs
 set $browser chromium
-set $TERMINAL pantheon-terminal
+set $TERMINAL terminator
 
 set $dir ~/.config/i3/
 
@@ -35,6 +35,9 @@ font pango:DejaVu Sans Mono 8
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
+# switch between the current and the previously focused one
+bindsym $mod+Tab workspace back_and_forth
+bindsym $mod+Shift+Tab move container to workspace back_and_forth
 
 # change focus
 bindsym $mod+j focus left
@@ -171,7 +174,7 @@ bindsym $mod+Control+Shift+0 move container to workspace $CWS0
 #Gaps
 smart_gaps on
 gaps inner 5
-gaps outer 10
+gaps outer 5
 
 # Window style
 new_window 1pixel
@@ -182,7 +185,9 @@ bindsym $mod+Shift+c reload
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
 bindsym $mod+Shift+r restart
 # exit i3 (logs you out of your X session)
-bindsym $mod+Shift+e exec $dir/i3-exit
+#bindsym $mod+Shift+e exec $dir/i3-exit
+bindcode $mod+Shift+26 exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
+
 #bindsym XF86PowerOff exec $dir/i3-exit
 
 #Lock i3
@@ -220,16 +225,16 @@ for_window [class="^Galculator$"] floating enable
 #for_windwos [class="I3-exit"] floating enable
 # assign [class="^uzbl-browser"] → $WS1
 assign [class="^Firefox$"] → $WS2
-assign [class="(?i)emacsclient"] → $WS4
+assign [class="(?i)code"] → $WS4
 # assign [class="^Tmux$"] → $WS3
 assign [class="(?i)opera"] → $WS5
 assign [class="(?i)telegram-desktop"] → $WS6
 assign [class="(?i)okular"] → $WS7
 assign [class="(?i)spotify"]→ $WS9
 assign [class="(?i)vlc"] → $WS0
+#assign [class="^visual-studio-code"] → $WS4
 
 assign [class="(?i)slic3r"] → $CWS1
-assign [class="(?i)emacsclient -c" instance="Emacs"] → $WS1
 assign [class="(?i)chromium"] → $CWS2
 assign [class="(?i)libreoffice"] → $WS8
 # colours
@@ -274,13 +279,11 @@ client.urgent           $red $red $background $red
 
 # Programs init
 #exec --no-startup-id i3-msg 'workspace '$WS1'; exec emacsclient -c -e "(fmgb/init-emacs)"'
-exec --no-startup-id i3-msg 'workspace '$WS1'; exec emacsclient -c ~/TODO.org'
+exec --no-startup-id i3-msg 'workspace '$WS8'; exec code'
 exec --no-startup-id i3-msg 'workspace '$WS2'; exec firefox'
-exec --no-startup-id i3-msg 'workspace '$WS3'; exec pantheon-terminal'
-exec --no-startup-id i3-msg 'workspace '$WS4'; exec emacsclient -c'
-exec --no-startup-id i3-msg 'workspace '$WS5'; exec opera'
-# exec --no-startup-id i3-msg 'workspace '$WS6'; exec telegram-desktop'
-exec --no-startup-id i3-msg 'workspace '$WS9'; exec spotify'
+exec --no-startup-id i3-msg 'workspace '$WS3'; exec terminator'
+#exec --no-startup-id i3-msg 'workspace '$WS6'; exec telegram-desktop'
+#exec --no-startup-id i3-msg 'workspace '$WS9'; exec spotify'
 
 exec --no-startup-id chromium
 exec --no-startup-id telegram-desktop
